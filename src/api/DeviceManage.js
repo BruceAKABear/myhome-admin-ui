@@ -2,13 +2,12 @@ import { createAPI } from '@/utils/request'
 
 // -----------------设备分类------------------
 // 设备分类分页查询
-export const categoryPageApi = data => createAPI('/device/deviceCategory/page', 'post', data)
+export const categoryPageApi = data => createAPI('/deviceCategory/page', 'get', data)
+export const categoryListApi = data => createAPI('/deviceCategory/categoryList', 'get', data)
 // 新增或修改
-export const categoryAddOrUpdateApi = data => createAPI('/device/deviceCategory/addOrUpdate', 'post', data)
+export const categoryAddOrUpdateApi = data => createAPI('/deviceCategory/addUpdate', 'post', data)
 // 删除分类
 export const delCategoryApi = data => createAPI(`/device/deviceCategory/delCategory/${data}`, 'delete')
-// 查询分类集合
-export const categoryListApi = data => createAPI('/device/deviceCategory/categoryList', 'get', data)
 
 // -------------设备管理-----------------
 // 设备分页查询

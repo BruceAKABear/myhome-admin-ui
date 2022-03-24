@@ -3,32 +3,25 @@
     <el-aside :width="$store.state.collapse?'64px':'200px'" class='sub-aside'>
       <!--菜单-->
       <el-menu
-        :default-active='lastActivePath'
-        class='sub-aside-menu'
-        background-color='#FFFFFF'
-        text-color='#000000'
-        active-text-color='#fff'
-        :unique-opened='true'
         :collapse='$store.state.collapse'
-        router
         :collapse-transition='false'
+        :default-active='$route.path'
+        :unique-opened='true'
+        active-text-color='#fff'
+        background-color='#FFFFFF'
+        class='sub-aside-menu'
+        router
+        text-color='#000000'
       >
-        <el-submenu
-          :index='secondMenu.routerPath'
-          v-for='secondMenu in $store.state.secondMenus'
-          :key='secondMenu.id'>
-          <template slot='title'>
-            <i :class='secondMenu.routerIcon'></i>
-            <span>{{ secondMenu.routerName }}</span>
-          </template>
-          <el-menu-item
-            :index='lastMenu.routerPath'
-            v-for='lastMenu in secondMenu.children'
-            :key='lastMenu.id'
-          >
-            <span slot='title'>{{ lastMenu.routerName }}</span>
-          </el-menu-item>
-        </el-submenu>
+
+        <el-menu-item
+          v-for='lastMenu in $store.state.secondMenus'
+          :key='lastMenu.id'
+          :index='lastMenu.path'
+        >
+          <i :class="lastMenu.icon"></i>
+          <span slot='title'>{{ lastMenu.name }}</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-main>
@@ -50,7 +43,7 @@
       </div>
       <!--  主view      -->
       <div class='main-view'>
-        <transition name='fade-transform' mode='out-in'>
+        <transition mode='out-in' name='fade-transform'>
           <router-view></router-view>
         </transition>
         <copy-right></copy-right>
@@ -63,17 +56,7 @@
 export default {
   name: 'InnerLayout',
   data() {
-    return {
-      lastActivePath: ''
-    }
-  },
-  mounted() {
-    this.lastActivePath = window.location.hash.split('#')[1]
-  },
-  watch: {
-    $route(to, from) {
-      this.lastActivePath = to.fullPath
-    }
+    return {}
   }
 }
 </script>
@@ -111,7 +94,7 @@ export default {
     }
 
     .main-view {
-      padding: 20px 10px;
+      padding: 10px 10px;
       background-color: #f6f8f9;
       overflow-x: hidden;
       overflow-y: hidden;

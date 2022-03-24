@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import { Notification } from 'element-ui'
 import router from '@/router'
 import store from '@/store'
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:9000/backend/',
+  baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 8000
 })
 // 请求拦截器
@@ -14,8 +14,7 @@ instance.interceptors.request.use(
     return config
   },
   error => {
-    Message.error('对不起，请求出错了!')
-    console.log(error) // for debug
+    Notification.error('对不起，请求出错了!')
     Promise.reject(error)
   }
 )
@@ -37,22 +36,13 @@ instance.interceptors.response.use(
         router.push('/login')
       } else {
         // 判断是警告还是错误
-        Message({
-          message: message,
-          type: 'error',
-          duration: 3 * 1000
-        })
+        Notification.error(message)
       }
       return Promise.reject(new Error('业务不能被执行'))
     }
   },
   error => {
-    console.log('err' + error)
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 1500
-    })
+    Notification.error(error.message)
     return Promise.reject(error)
   }
 )
@@ -63,6 +53,8 @@ export const createAPI = (url, method, data) => {
     config.params = data
   } else if (method === 'post') {
     config.data = data
+  } else if (method === 'delete') {
+    url = url.concat('/', data)
   }
   return instance({
     url,

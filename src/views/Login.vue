@@ -2,7 +2,7 @@
   <div class='login-container'>
     <div class='login-box'>
       <div class='login-left'>
-        <img src='../assets/login/inner-login.png' height='295' width='363' />
+        <img height='295' src='../assets/login/inner-login.png' width='363'/>
       </div>
       <div class='login-right'>
         <div class='login-header'>
@@ -10,32 +10,21 @@
         </div>
         <div class='login-input-box'>
           <el-input
-            size='large'
-            v-model='loginObject.phone'
-            placeholder='手机号码'
-            prefix-icon='el-icon-mobile'></el-input>
+            v-model='loginObject.email'
+            placeholder='邮箱'
+            prefix-icon='el-icon-mobile'
+            size='large'></el-input>
           <el-input
-            style='margin-top: 20px'
             ref='userNameInput'
-            size='large'
             v-model='loginObject.password'
-            type='password'
             placeholder='密码'
-            prefix-icon='el-icon-lock'></el-input>
+            prefix-icon='el-icon-lock'
+            size='large'
+            style='margin-top: 20px'
+            type='password'></el-input>
           <el-button type='primary' @click='doLogin'>
             立即登录
           </el-button>
-        </div>
-        <div class='more-action-box'>
-          <div>
-            <router-link :to="{path:'regist'}">
-              <span>开发者注册</span>
-            </router-link>
-
-          </div>
-          <div>
-            <span>忘记密码</span>
-          </div>
         </div>
       </div>
     </div>
@@ -43,33 +32,41 @@
 </template>
 
 <script>
-import { getPermissionTree, getUserInfo, login } from '@/api/SystemConfigApi'
+import { checkIsFirst, getUserInfo, login } from '@/api/SystemConfigApi'
 
 export default {
   name: 'Login',
   data() {
     return {
       loginObject: {
-        phone: '17317539623',
+        email: 'dengyi@dengyi.pro',
         password: '12345678'
       }
     }
   },
   methods: {
     doLogin() {
-      if (this.phone === '' || this.password === '') {
-        this.$message.error('用户名密码不能为空')
+      if (this.loginObject.email === '' || this.loginObject.password === '') {
+        this.$notify({
+          type: 'warning',
+          title: '提示',
+          message: '用户名密码不能为空',
+          offset: 0,
+          duration: 1500
+        })
       } else {
         login(this.loginObject).then(res => {
           this.$store.commit('setUserToken', res.data)
           getUserInfo().then(result => {
             if (result.status) {
               this.$store.commit('setUserInfo', result.data)
-              getPermissionTree().then(pRest => {
-                this.$store.commit('setMenuPermission', pRest.data.menus)
-                this.$store.commit('setButtonPermission', pRest.data.button)
-                this.$store.commit('setSecondMenus', pRest.data.menus[0].children)
-                this.$router.push('/')
+              // 请求是否是第一次登录系统
+              checkIsFirst().then(res => {
+                if (res.status && res.data) {
+                  this.$router.push('/family')
+                } else {
+                  this.$router.push('/')
+                }
               })
             }
           })

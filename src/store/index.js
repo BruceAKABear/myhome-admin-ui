@@ -11,14 +11,11 @@ export default new Vuex.Store({
     userToken: '',
     // 用户信息
     userInfo: {},
-    // 菜单权限树
-    menuPermission: [],
-    // 按钮权限数组
-    buttonPermission: [],
     // 已经被选中的二级菜单
     secondMenus: [],
     // 侧边菜单是否收起
-    collapse: false
+    collapse: false,
+    firstActivePath: '/dashboard'
   },
   mutations: {
     setScreenWidth(store, width) {
@@ -43,27 +40,15 @@ export default new Vuex.Store({
     setUserInfo(store, userInfo) {
       store.userInfo = userInfo
     },
-    /**
-     * 保存菜单权限
-     * @param store
-     * @param menus
-     */
-    setMenuPermission(store, menus) {
-      store.menuPermission = menus
-    },
-    /**
-     * 保存按钮权限
-     * @param store
-     * @param buttons
-     */
-    setButtonPermission(store, buttons) {
-      store.buttonPermission = buttons
-    },
+
     setSecondMenus(store, menus) {
       store.secondMenus = menus
     },
     setCollapse(state, flag) {
       state.collapse = flag
+    },
+    setFirstActivePath(state, fpath) {
+      state.firstActivePath = fpath
     }
   },
   actions: {},

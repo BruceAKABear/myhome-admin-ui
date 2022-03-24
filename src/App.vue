@@ -10,9 +10,7 @@ export default {
   name: 'App',
   components: {},
   data() {
-    return {
-      latActivePath: ''
-    }
+    return {}
   },
   created() {
     // 在页面加载时读取sessionStorage里的状态信息

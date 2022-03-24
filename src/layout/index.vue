@@ -6,20 +6,19 @@
       </div>
       <div class='main-header-menu-box'>
         <el-menu
-          :default-active='firstActivePath'
+          :default-active="$store.state.firstActivePath"
+          active-text-color='#FFFFFF'
+          background-color='#FFFFFF'
           class='main-header-menu'
           mode='horizontal'
-          background-color='#FFFFFF'
-          text-color='#000000'
-          active-text-color='#FFFFFF'
           router
+          text-color='#000000'
         >
           <el-menu-item
-            :index='menu.routerPath'
-            v-for='menu in $store.state.menuPermission'
-            :key='menu.id'
-            @click='firstMenuClick(menu)'>
-            {{ menu.routerName }}
+            v-for="(menu,index) in menuData"
+            :key="index"
+            :index="menu.path"
+            @click="saveChildren(menu)">{{ menu.name }}
           </el-menu-item>
         </el-menu>
       </div>
@@ -30,14 +29,14 @@
             <span>在线文档</span>
           </div>
           <div class='avatar-box'>
-            <el-avatar size='small' :src='$store.state.userInfo.avatar'></el-avatar>
+            <el-avatar :src='$store.state.userInfo.avatar' size='small'></el-avatar>
             <el-dropdown trigger='click' @command='moreAction'>
               <span class='el-dropdown-link'>
                 <i class='el-icon-arrow-down el-icon--right'></i>
               </span>
               <el-dropdown-menu slot='dropdown'>
-                <el-dropdown-item icon='el-icon-user-solid' command='myInfo'>我的</el-dropdown-item>
-                <el-dropdown-item icon='el-icon-delete-solid' command='logout'>退出</el-dropdown-item>
+                <el-dropdown-item command='myInfo' icon='el-icon-user-solid'>我的</el-dropdown-item>
+                <el-dropdown-item command='logout' icon='el-icon-delete-solid'>退出</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -46,7 +45,9 @@
     </el-header>
 
     <el-container class='sub-layout'>
-      <router-view></router-view>
+      <transition mode='out-in' name='fade-transform'>
+        <router-view></router-view>
+      </transition>
     </el-container>
   </el-container>
 </template>
@@ -56,7 +57,71 @@ export default {
   name: 'Index',
   data() {
     return {
-      firstActivePath: ''
+      menuData: [
+        {
+          id: '11',
+          path: '/dashboard',
+          name: '控制台',
+          children: []
+        }, {
+          id: '22',
+          path: '/family',
+          name: '家庭管理',
+          children: [
+            {
+              id: '221',
+              path: '/family/family',
+              name: '家庭信息',
+              icon: 'el-icon-s-home'
+            }, {
+              id: '222',
+              path: '/family/floor',
+              name: '楼层信息',
+              icon: 'el-icon-s-operation'
+            }, {
+              id: '223',
+              path: '/family/room',
+              name: '房间信息',
+              icon: 'el-icon-menu'
+            }
+          ]
+        }, {
+          id: '33',
+          path: '/device',
+          name: '设备管理',
+          children: [
+            {
+              id: '331',
+              path: '/device/category',
+              name: '设备分类',
+              icon: 'el-icon-s-grid'
+            }, {
+              id: '332',
+              path: '/device/device',
+              name: '设备管理',
+              icon: 'el-icon-cpu'
+            }, {
+              id: '333',
+              path: '/device/debug',
+              name: '设备调试',
+              icon: 'el-icon-set-up'
+            }
+          ]
+        },
+        {
+          id: '44',
+          path: '/system',
+          name: '系统设置',
+          children: [
+            {
+              id: '441',
+              path: '/system/rtls',
+              name: '室内定位',
+              icon: 'el-icon-position'
+            }
+          ]
+        }
+      ]
     }
   },
   methods: {
@@ -64,7 +129,8 @@ export default {
      * 第一级菜单点击
      * @param menuData
      */
-    firstMenuClick(menuData) {
+    saveChildren(menuData) {
+      this.$store.commit('setFirstActivePath', menuData.path)
       this.$store.commit('setSecondMenus', menuData.children)
     },
     moreAction(command) {
@@ -83,23 +149,10 @@ export default {
       }
     },
     gotoDoc() {
-      window.open('https://myhome.dengyi.pro')
+      window.open('https://github.com/BearLaboratory/myhome-community')
     }
   },
-  mounted() {
-    this.firstActivePath = '/' + window.location.hash.split('/')[1]
-  },
   watch: {
-    $route(to, from) {
-      this.firstActivePath = '/' + to.fullPath.split('/')[1]
-      // 遍历查到父再设置子
-      this.$store.state.menuPermission.forEach(item => {
-        if (item.routerPath === this.firstActivePath) {
-          this.$store.commit('setSecondMenus', item.children)
-        }
-      })
-    },
-
     '$store.state.userInfo.avatar': function() {
       // 你需要执行的代码
       console.log('头像改变')
@@ -189,4 +242,10 @@ export default {
 .el-menu-item:hover {
   background-color: #71d5a1 !important;
 }
+
+/deep/ .el-submenu__title:hover {
+  background-color: #71d5a1 !important;
+
+}
+
 </style>
