@@ -29,16 +29,29 @@
         align='center'
         label='楼层名'
         prop='name'
+        show-overflow-tooltip
       />
       <el-table-column
         align='center'
-        label='楼层下房间数'
+        label='房间数'
+        prop='roomCount'
+      />
+      <el-table-column
+        align='center'
+        label='设备数'
         prop='deviceCount'
       />
       <el-table-column
         align='center'
-        label='楼层下设备数'
-        prop='deviceCount'
+        label='创建时间'
+        prop='createTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
+        label='更新时间'
+        prop='updateTime'
+        show-overflow-tooltip
       />
       <el-table-column
         align='center'
@@ -68,7 +81,7 @@
       />
     </div>
 
-    <el-dialog :before-close="closeDia" :visible.sync='dialogVisible' title='新增/修改楼层' width="600px">
+    <el-dialog :before-close="closeDia" :visible.sync='dialogVisible' :title="newObj.id?'修改楼层':'新增楼层'" width="600px">
       <el-form
         ref='addForm'
         :model='newObj'

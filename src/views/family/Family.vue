@@ -6,6 +6,12 @@
           <el-form-item label="家庭名" prop="name">
             <el-input v-model="familyObject.name" autocomplete="off"></el-input>
           </el-form-item>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-input v-model="familyObject.createTime" autocomplete="off" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="更新时间" prop="updateTime">
+            <el-input v-model="familyObject.updateTime" autocomplete="off" disabled></el-input>
+          </el-form-item>
           <el-form-item label="天气APPID" prop="appId">
             <el-input v-model="familyObject.appId" autocomplete="off"></el-input>
           </el-form-item>

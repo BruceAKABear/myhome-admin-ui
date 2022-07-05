@@ -31,7 +31,7 @@ instance.interceptors.response.use(
       return response.data
     } else {
       console.log(type)
-      if (code === 10002 || code === 10003) {
+      if (code === 10002 || code === 10004) {
         // token失效需要重新登录
         router.push('/login')
       } else {
@@ -53,8 +53,6 @@ export const createAPI = (url, method, data) => {
     config.params = data
   } else if (method === 'post') {
     config.data = data
-  } else if (method === 'delete') {
-    url = url.concat('/', data)
   }
   return instance({
     url,

@@ -2,13 +2,13 @@
   <div class='page-container'>
     <div class='table-header-box'>
       <div style='display: flex;align-items: center'>
-        <el-input v-model='pageParam.name' clearable placeholder='请输入分类名' size='mini'/>
+        <el-input v-model='pageParam.name' clearable placeholder='请输入产品名' size='mini'/>
         <el-button icon='el-icon-search' size='mini' style='margin-left: 10px' type='primary' @click='doPageQuery'>
           搜索
         </el-button>
       </div>
       <div class='header-option-box'>
-        <el-button icon='el-icon-plus' size='mini' type='warning' @click='showAddDia'>添加分类</el-button>
+        <el-button icon='el-icon-plus' size='mini' type='warning' @click='showAddDia'>新增产品</el-button>
       </div>
     </div>
 
@@ -27,9 +27,26 @@
       />
       <el-table-column
         align='center'
-        label='分类名'
+        label='产品名'
         prop='name'
+        show-overflow-tooltip
       />
+      <el-table-column
+        align='center'
+        label='是否可控'
+      >
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.canControl?'success':'info' ">{{ scope.row.canControl ? '可控' : '不可控' }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align='center'
+        label='产品类型'
+      >
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.type===1?'success':'info' ">{{ scope.row.type === 1 ? '普通产品' : '网关产品' }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         align='center'
         label='包含设备数'
@@ -37,8 +54,21 @@
       />
       <el-table-column
         align='center'
+        label='创建时间'
+        prop='createTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
+        label='更新时间'
+        prop='updateTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
         label='操作'
         width='180'
+        fixed="right"
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
@@ -63,7 +93,7 @@
       />
     </div>
 
-    <el-dialog :before-close="closeDia" :visible.sync='addDialogFormVisible' title='新增/修改分类'>
+    <el-dialog :before-close="closeDia" :visible.sync='addDialogFormVisible' :title="dynamicObject.id?'修改产品':'新增产品'">
       <el-form
         ref='addForm'
         :model='dynamicObject'
@@ -72,8 +102,18 @@
         label-width='100px'
         status-icon
       >
-        <el-form-item label='分类名' prop='name'>
+        <el-form-item label='产品名' prop='name'>
           <el-input v-model='dynamicObject.name' autocomplete='off' size="mini"/>
+        </el-form-item>
+        <el-form-item label='描述'>
+          <el-input
+            v-model='dynamicObject.note'
+            type="textarea"
+            maxlength="250"
+            show-word-limit
+            placeholder="请输入描述"
+            autocomplete='off'
+          />
         </el-form-item>
         <el-form-item label='是否可控' prop='canControl' size="mini">
           <el-col :span='24'>
@@ -93,21 +133,41 @@
           </el-col>
         </el-form-item>
 
+        <el-form-item label='产品类型' prop='type' size="mini">
+          <el-col :span='24'>
+            <el-select
+              v-model='dynamicObject.type'
+              placeholder='请选择产品类型'
+              style='width: 100%'>
+              <el-option
+                :value='1'
+                label='普通产品'>
+              </el-option>
+              <el-option
+                :value='2'
+                label='网关产品'>
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
         <el-form-item
-          v-for="(item) in dynamicObject.categoryFieldList"
-          :key="item.key"
+          v-for="(item,index) in dynamicObject.productFields"
+          :key="index"
           :rules="{
-           required: true, message: '域名不能为空', trigger: 'blur'}"
-          label='控制字段'
+           required: true, message: '控制字段', trigger: 'blur'}"
+          label='字段信息'
         >
-          <el-row :gutter="5">
-            <el-col :span="8">
-              <el-input v-model="item.field" size="mini"></el-input>
+          <el-row :gutter="10">
+            <el-col :span="6">
+              <el-input v-model="item.label" size="mini" placeholder='显示值'></el-input>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
+              <el-input v-model="item.field" size="mini" placeholder='字段值'></el-input>
+            </el-col>
+            <el-col :span="6">
               <el-select
                 v-model='item.fieldType'
-                placeholder='请选择字段类型'
+                placeholder='字段类型'
                 size="mini"
                 style='width: 100%'>
                 <el-option
@@ -116,19 +176,19 @@
                   :label='fieldTypeItem.fieldType'
                   :value='fieldTypeItem.fieldType'>
                 </el-option>
-
               </el-select>
             </el-col>
-            <el-col :span="6">
-              <el-button size="mini" type="info" @click="deleteDynamicField(item)">删除</el-button>
+            <el-col :span="5">
+              <div style="">
+                <el-button size="mini" type="danger" @click="deleteDynamicField(item)">删除</el-button>
+              </div>
             </el-col>
           </el-row>
         </el-form-item>
       </el-form>
       <div slot='footer' class='dialog-footer'>
+        <el-button size="mini" @click="addField" type="warning">新增控制字段</el-button>
         <el-button size="mini" @click='closeDia'>取 消</el-button>
-
-        <el-button size="mini" @click="addField">新增控制字段</el-button>
         <el-button size="mini" type='primary' @click='saveOrUpdate'>保 存</el-button>
       </div>
     </el-dialog>
@@ -137,14 +197,14 @@
 </template>
 
 <script>
-import { categoryAddOrUpdateApi, categoryPageApi, delCategoryApi } from '@/api/DeviceManage'
+import { deleteProductApi, productAddOrUpdateApi, productPageApi } from '@/api/DeviceManage'
 
 export default {
-  name: 'Category',
+  name: 'Product',
   data() {
     return {
       dynamicObject: {
-        categoryFieldList: [
+        productFields: [
           {
             field: '',
             fieldType: '',
@@ -155,7 +215,8 @@ export default {
       },
       pageResult: {},
       pageParam: {
-        pageSize: 14
+        page: 1,
+        size: 14
       },
 
       addDialogFormVisible: false,
@@ -184,6 +245,13 @@ export default {
             message: '请选择平台是否可控',
             trigger: 'change'
           }
+        ],
+        type: [
+          {
+            required: true,
+            message: '设备类型必选',
+            trigger: 'change'
+          }
         ]
       }
     }
@@ -194,25 +262,34 @@ export default {
   },
   methods: {
     doPageQuery() {
-      categoryPageApi(this.pageParam).then(res => {
+      productPageApi(this.pageParam).then(res => {
         this.pageResult = res.data
       })
     },
     showAddDia() {
-      this.newObj = {}
+      this.dynamicObject = {
+        productFields: [
+          {
+            field: '',
+            fieldType: '',
+            key: Date.now()
+          }
+        ],
+        name: ''
+      }
       this.addDialogFormVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.clearValidate()
       })
     },
     pageNumberChange(e) {
-      this.pageParam.pageNumber = e
+      this.pageParam.page = e
       this.doPageQuery()
     },
     saveOrUpdate() {
       this.$refs.addForm.validate(valid => {
         if (valid) {
-          categoryAddOrUpdateApi(this.dynamicObject).then(res => {
+          productAddOrUpdateApi(this.dynamicObject).then(res => {
             if (res.status) {
               this.$notify.success('操作成功')
               this.addDialogFormVisible = false
@@ -231,8 +308,8 @@ export default {
       this.addDialogFormVisible = true
     },
     deleteCategory(rowData) {
-      this.$confirm('是否确认删除设备分类', '提示', { type: 'warning' }).then(() => {
-        delCategoryApi(rowData.id).then(res => {
+      this.$confirm('是否确定删除产品', '提示', { type: 'warning' }).then(() => {
+        deleteProductApi(rowData.id).then(res => {
           this.$notify.success('删除分类成功')
           this.doPageQuery()
         })

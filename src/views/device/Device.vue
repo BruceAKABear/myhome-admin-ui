@@ -18,9 +18,9 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="pageParam.categoryId" clearable placeholder="请选择分类" size="mini" style="margin-left: 10px">
+        <el-select v-model="pageParam.productId" clearable placeholder="请选择产品" size="mini" style="margin-left: 10px">
           <el-option
-            v-for="item in categoryList"
+            v-for="item in productList"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -44,9 +44,19 @@
     >
       <el-table-column
         align='center'
-        label='系统ID'
+        label='ID'
         prop='id'
-        show-overflow-tooltip
+        width="160"
+      />
+      <el-table-column
+        align='center'
+        label='芯片ID'
+        prop='chipId'
+      />
+      <el-table-column
+        align='center'
+        label='固件版本'
+        prop='framewareVersion'
       />
       <el-table-column
         align='center'
@@ -76,7 +86,7 @@
       </el-table-column>
       <el-table-column
         align='center'
-        label='是否户主可见'
+        label='仅户主可见'
         prop='onlyHolderCanSee'
       >
         <template slot-scope='scope'>
@@ -88,8 +98,21 @@
       </el-table-column>
       <el-table-column
         align='center'
+        label='创建时间'
+        prop='createTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
+        label='更新时间'
+        prop='updateTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
         label='操作'
         width='180'
+        fixed="right"
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
@@ -113,16 +136,16 @@
       />
     </div>
 
-    <el-dialog :visible.sync='dialogVisible' title='新增/修改设备' width="600px">
+    <el-dialog :visible.sync='dialogVisible' :title="newObj.id?'修改设备':'新增设备'" width="600px">
       <el-form
         ref='addForm'
         :model='newObj'
         :rules="rules"
-        label-width='200px'
+        label-width='120px'
         status-icon
       >
         <el-form-item label='所属楼层' prop='floorId'>
-          <el-col :span="16">
+          <el-col :span="24">
             <el-select
               v-model="newObj.floorId"
               :disabled="newObj.id&&newObj.id!==''"
@@ -139,7 +162,7 @@
           </el-col>
         </el-form-item>
         <el-form-item label='所属房间' prop='roomId'>
-          <el-col :span="16">
+          <el-col :span="24">
             <el-select v-model="newObj.roomId" clearable placeholder="请选择房间" style="width: 100%">
               <el-option
                 v-for="item in roomList"
@@ -150,11 +173,11 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label='所属分类' prop='categoryId'>
-          <el-col :span="16">
-            <el-select v-model="newObj.categoryId" clearable placeholder="请选择分类" style="width: 100%">
+        <el-form-item label='所属产品' prop='productId'>
+          <el-col :span="24">
+            <el-select v-model="newObj.productId" clearable placeholder="请选择所属产品" style="width: 100%">
               <el-option
-                v-for="item in categoryList"
+                v-for="item in productList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
@@ -162,11 +185,11 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label='是否户主可见' prop='onlyHolderCanSee' style="width: 100%">
-          <el-col :span='16'>
+        <el-form-item label='只有户主可见' prop='onlyHolderCanSee' style="width: 100%">
+          <el-col :span='24'>
             <el-select
               v-model='newObj.onlyHolderCanSee'
-              placeholder='请选择是否是否户主可见'
+              placeholder='请选择是否只有户主可见'
               style='width: 100%'>
               <el-option
                 :value='true'
@@ -180,8 +203,13 @@
           </el-col>
         </el-form-item>
         <el-form-item label='设备名' prop='nickName'>
-          <el-col :span="16">
+          <el-col :span="24">
             <el-input v-model='newObj.nickName' autocomplete='off'/>
+          </el-col>
+        </el-form-item>
+        <el-form-item label='芯片ID'>
+          <el-col :span="24">
+            <el-input v-model='newObj.chipId' autocomplete='off'/>
           </el-col>
         </el-form-item>
       </el-form>
@@ -196,7 +224,7 @@
 <script>
 import { addUpdateApi, deleteDeviceApi, devicePageApi } from '@/api/Device'
 import { floorListApi } from '@/api/Floor'
-import { categoryListApi } from '@/api/DeviceManage'
+import { productListApi } from '@/api/DeviceManage'
 import { roomListApi } from '@/api/Room'
 
 export default {
@@ -209,7 +237,7 @@ export default {
       pageResult: {},
       floorList: [],
       roomList: [],
-      categoryList: [],
+      productList: [],
       dialogVisible: false,
       newObj: {},
       rules: {
@@ -227,10 +255,10 @@ export default {
             trigger: 'change'
           }
         ],
-        categoryId: [
+        productId: [
           {
             required: true,
-            message: '分类必须选择',
+            message: '所属产品必须选择',
             trigger: 'change'
           }
         ],
@@ -260,14 +288,12 @@ export default {
   methods: {
     doPageQuery() {
       devicePageApi(this.pageParam).then(res => {
-        console.log(res.data)
         this.pageResult = res.data
       })
     },
     doGetFloorList() {
       floorListApi().then(res => {
         this.floorList = res.data
-        console.log(this.floorList)
       })
     },
     doGetRoomList() {
@@ -275,13 +301,17 @@ export default {
         this.roomList = res.data
       })
     },
-    doGetCategoryList() {
-      categoryListApi().then(res => {
-        this.categoryList = res.data
+    doGetProductList() {
+      productListApi().then(res => {
+        this.productList = res.data
       })
     },
     showAddDia() {
       this.dialogVisible = true
+      this.newObj = {}
+      this.$nextTick(() => {
+        this.$refs.addForm.clearValidate()
+      })
     },
     saveOrUpdate() {
       this.$refs.addForm.validate(r => {
@@ -301,6 +331,10 @@ export default {
         }
       })
     },
+    showUpdate(rowData) {
+      this.newObj = rowData
+      this.dialogVisible = true
+    },
     deleteDevice(rowData) {
       this.$confirm('是否确认删除设备设备', '提示', { type: 'warning' }).then(() => {
         deleteDeviceApi(rowData.id).then(res => {
@@ -314,7 +348,7 @@ export default {
     this.doPageQuery()
     this.doGetFloorList()
     this.doGetRoomList()
-    this.doGetCategoryList()
+    this.doGetProductList()
   }
 }
 </script>

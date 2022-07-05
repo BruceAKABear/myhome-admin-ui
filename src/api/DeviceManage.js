@@ -1,5 +1,11 @@
 import { createAPI } from '@/utils/request'
 
+// ---------------产品管理
+export const productPageApi = data => createAPI('/product/page', 'get', data)
+export const deleteProductApi = data => createAPI(`/product/delete/${data}`, 'delete')
+export const productAddOrUpdateApi = data => createAPI('/product/addUpdate', 'post', data)
+export const productListApi = data => createAPI('/product/list', 'get', data)
+
 // -----------------设备分类------------------
 // 设备分类分页查询
 export const categoryPageApi = data => createAPI('/deviceCategory/page', 'get', data)
@@ -7,7 +13,7 @@ export const categoryListApi = data => createAPI('/deviceCategory/categoryList',
 // 新增或修改
 export const categoryAddOrUpdateApi = data => createAPI('/deviceCategory/addUpdate', 'post', data)
 // 删除分类
-export const delCategoryApi = data => createAPI(`/device/deviceCategory/delCategory/${data}`, 'delete')
+export const delCategoryApi = data => createAPI(`/deviceCategory/delete/${data}`, 'delete')
 
 // -------------设备管理-----------------
 // 设备分页查询

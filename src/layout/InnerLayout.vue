@@ -13,7 +13,6 @@
         router
         text-color='#000000'
       >
-
         <el-menu-item
           v-for='lastMenu in $store.state.secondMenus'
           :key='lastMenu.id'

@@ -1,21 +1,6 @@
 <template>
   <div class='page-container'>
     <el-row :gutter='30'>
-      <el-col :hidden-md-only="true" :span='4'>
-        <el-card :body-style="{ padding: '0px' }" shadow="hover" style="border-radius: 15px">
-          <div class=' basic-info-box'>
-            <div class='basic-info-box-header' style='background-color: #F56C6C'>
-              <div style='display: flex;flex-direction: column;align-items: center'>
-                <i class='el-icon-s-home'></i>
-                <span class='name-class'>
-                  家庭数
-                </span>
-              </div>
-            </div>
-            <div class='basic-info-box-body'>{{ dashboardInfoObject.familyCount }}</div>
-          </div>
-        </el-card>
-      </el-col>
       <el-col :span='4'>
         <el-card :body-style="{ padding: '0px' }" shadow="hover" style="border-radius: 15px">
           <div class=' basic-info-box'>

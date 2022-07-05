@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { checkIsFirst, getUserInfo, login } from '@/api/SystemConfigApi'
+import { checkIsFirst, getUserInfo, login } from '@/api/SystemApi'
 
 export default {
   name: 'Login',
@@ -62,10 +62,14 @@ export default {
               this.$store.commit('setUserInfo', result.data)
               // 请求是否是第一次登录系统
               checkIsFirst().then(res => {
-                if (res.status && res.data) {
-                  this.$router.push('/family')
+                if (res.status) {
+                  if (res.status && res.data) {
+                    this.$router.push('/family')
+                  } else {
+                    this.$router.push('/')
+                  }
                 } else {
-                  this.$router.push('/')
+                  this.$notify.error(res.message)
                 }
               })
             }

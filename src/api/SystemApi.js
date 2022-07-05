@@ -8,6 +8,9 @@ export const checkIsFirst = data => createAPI('/family/checkIsFirst', 'get', dat
 // 获取用户信息
 export const getUserInfo = data => createAPI('/user/info', 'get', data)
 export const updateUserInfoApi = data => createAPI('/sysUser/updateUserInfo', 'post', data)
+
+export const basicSystemInfoApi = data => createAPI('/systemInfo/basicInfo', 'get', data)
+
 // ---------------------用户相关----------------------------
 // 用户分页查询
 export const userPageApi = data => createAPI('/sysUser/page', 'get', data)

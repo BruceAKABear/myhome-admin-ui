@@ -10,9 +10,14 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-button icon='el-icon-search' size='mini' style='margin-left: 10px' type='primary' @click='doPageQuery'>
-          搜索
-        </el-button>
+        <div style='margin-left: 10px'>
+          <el-input v-model="pageParam.roomName" placeholder="请输入房间名" size="mini" clearable></el-input>
+        </div>
+        <div style='margin-left: 10px'>
+          <el-button icon='el-icon-search' size='mini' type='primary' @click='doPageQuery'>
+            搜索
+          </el-button>
+        </div>
       </div>
       <div class='header-option-box'>
         <el-button icon='el-icon-plus' size='mini' type='warning' @click='dialogVisible=true'>添加房间</el-button>
@@ -51,6 +56,18 @@
         align='center'
         label='定位基站数量'
         prop='anchorCount'
+      />
+      <el-table-column
+        align='center'
+        label='创建时间'
+        prop='createTime'
+        show-overflow-tooltip
+      />
+      <el-table-column
+        align='center'
+        label='更新时间'
+        prop='updateTime'
+        show-overflow-tooltip
       />
       <el-table-column
         align='center'
