@@ -50,6 +50,11 @@
       />
       <el-table-column
         align='center'
+        label='所属产品'
+        prop='productName'
+      />
+      <el-table-column
+        align='center'
         label='芯片ID'
         prop='chipId'
       />

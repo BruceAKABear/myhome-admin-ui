@@ -34,6 +34,11 @@
       />
       <el-table-column
         align='center'
+        label='所属产品'
+        prop='productName'
+      />
+      <el-table-column
+        align='center'
         label='固件描述'
         prop='note'
         show-overflow-tooltip

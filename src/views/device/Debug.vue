@@ -9,7 +9,7 @@
             :label="item.nickName"
             :value="item.id">
             <span style="float: left">{{ item.nickName }}</span>
-            <span :style="{float: 'right', color: item.online?'#8492a6':'#F56C6C', fontSize: '13px'}">{{
+            <span :style="{float: 'right', color: item.online?'#19BE6B':'#F56C6C', fontSize: '13px'}">{{
                 item.online ? '在线' : '离线'
               }}</span>
           </el-option>
@@ -38,21 +38,31 @@
                 <el-col :span="12" style="height: 28px;display: flex; align-items: center">
                   <span>控制字段：{{ item.field }}</span>
                 </el-col>
-                <el-col :span="12" style="display: flex;align-items: center">
-                  <span>控制值：</span>
-                  <el-select
-                    v-model='orderValue'
-                    placeholder='请选择布尔值'
-                    style='width: 100%'>
-                    <el-option
-                      :value='true'
-                      label='true'>
-                    </el-option>
-                    <el-option
-                      :value='false'
-                      label='false'>
-                    </el-option>
-                  </el-select>
+                <el-col :span="12">
+                  <el-row style="display: flex;align-items: center">
+                    <el-col :span="8">
+                      <div
+                        style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 28px;">
+                        <span>控制值：</span>
+                      </div>
+                    </el-col>
+                    <el-col :span="16">
+                      <el-select
+                        size="mini"
+                        v-model="orderObject[item.field]"
+                        placeholder='请选择布尔值'
+                        style='width: 100%'>
+                        <el-option
+                          :value='true'
+                          label='true'>
+                        </el-option>
+                        <el-option
+                          :value='false'
+                          label='false'>
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                  </el-row>
                 </el-col>
               </el-row>
             </div>
@@ -80,6 +90,7 @@
               align='center'
               label='消息内容'
               prop='payload'
+              show-overflow-tooltip
             />
             <el-table-column
               align='center'
@@ -116,8 +127,8 @@
 
 <script>
 import { debugDeviceListApi, sendDebugApi } from '@/api/Device'
-import { fieldListApi } from '@/api/CategoryField'
 import { deviceLogPageApi } from '@/api/DeviceLog'
+import { fieldListApi } from '@/api/ProductField'
 
 export default {
   name: 'Debug',
@@ -130,7 +141,6 @@ export default {
       orderObject: {},
       categoryFieldList: [],
       pageParam: {},
-      orderValue: '',
       intervalId: ''
     }
   },
@@ -143,9 +153,8 @@ export default {
         this.deviceList = res.data
       })
     },
-    doGetCategoryFieldList() {
+    doGetFieldList() {
       fieldListApi({ deviceId: this.deviceId }).then(res => {
-        console.log(res.data)
         this.categoryFieldList = res.data
       })
     },
@@ -155,16 +164,26 @@ export default {
         this.pageResult = res.data
       })
     },
-    pageNumberChange() {
+    pageNumberChange(v) {
+      this.pageParam.page = v
+      this.doGetDeviceLogPage()
     },
     sendDebugOrder() {
-      this.orderObject.deviceId = this.deviceId
-      this.orderObject.content = JSON.stringify({ on: this.orderValue })
-      sendDebugApi(this.orderObject).then(res => {
-        if (res.status) {
-          this.$notify.success('操作成功')
-        }
-      })
+      console.log(this.orderObject)
+      var flag = true
+      if (JSON.stringify(this.orderObject) === '{}') {
+        flag = false
+      }
+      if (flag) {
+        this.orderObject.deviceId = this.deviceId
+        sendDebugApi(this.orderObject).then(res => {
+          if (res.status) {
+            this.$notify.success('操作成功')
+          }
+        })
+      } else {
+        this.$notify.warning('请将参数填写完整')
+      }
     }
   },
   mounted() {
@@ -182,7 +201,7 @@ export default {
       this.pageParam.deviceId = v
       this.doGetDeviceLogPage()
       if (v !== '') {
-        this.doGetCategoryFieldList()
+        this.doGetFieldList()
       }
     }
   }

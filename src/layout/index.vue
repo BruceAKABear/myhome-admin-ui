@@ -131,23 +131,48 @@ export default {
         },
         {
           id: '44',
+          path: '/automation',
+          name: '自动化',
+          children: [
+            {
+              id: '441',
+              path: '/automation/scheduleJob',
+              name: '定时任务',
+              icon: 'el-icon-timer'
+            },
+            {
+              id: '446',
+              path: '/automation/countDown',
+              name: '倒计时任务',
+              icon: 'el-icon-alarm-clock'
+            },
+            {
+              id: '447',
+              path: '/automation/condition',
+              name: '条件任务',
+              icon: 'el-icon-aim'
+            }
+          ]
+        },
+        {
+          id: '55',
           path: '/system',
           name: '系统设置',
           children: [
             {
-              id: '441',
+              id: '551',
               path: '/system/rtls',
               name: '室内定位',
               icon: 'el-icon-position'
             },
             {
-              id: '446',
+              id: '556',
               path: '/system/systeminfo',
               name: '系统信息',
               icon: 'el-icon-s-data'
             },
             {
-              id: '447',
+              id: '557',
               path: '/system/personal',
               name: '个人信息',
               icon: 'el-icon-user-solid'

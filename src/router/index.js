@@ -67,6 +67,23 @@ const routes = [{
         component: () => import('@/views/device/Debug')
       }]
     }, {
+      path: 'automation',
+      component: () => import('@/layout/InnerLayout'),
+      redirect: '/automation/scheduleJob',
+      children: [{
+        path: '/automation/scheduleJob',
+        meta: { title: '定时任务' },
+        component: () => import('@/views/automation/ScheduleJob')
+      }, {
+        path: '/automation/countDown',
+        meta: { title: '倒计时任务' },
+        component: () => import('@/views/automation/CountDown')
+      }, {
+        path: '/automation/condition',
+        meta: { title: '条件任务' },
+        component: () => import('@/views/automation/Condition')
+      }]
+    }, {
       path: 'system',
       component: () => import('@/layout/InnerLayout'),
       redirect: '/system/rtls',
