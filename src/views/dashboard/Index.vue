@@ -1,6 +1,6 @@
 <template>
   <div class='page-container'>
-    <el-row :gutter='30'>
+    <el-row :gutter='30' >
       <el-col :span='4'>
         <el-card :body-style="{ padding: '0px' }" shadow="hover" style="border-radius: 15px">
           <div class=' basic-info-box'>
@@ -63,6 +63,19 @@
               </div>
             </div>
             <div class='basic-info-box-body'>{{ dashboardInfoObject.onlineDeviceCount }}</div>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :span='4'>
+        <el-card :body-style="{ padding: '0px' }" shadow="hover" style="border-radius: 15px">
+          <div class=' basic-info-box'>
+            <div class='basic-info-box-header' style='background-color: #c8c9cc'>
+              <div style='display: flex;flex-direction: column;align-items: center'>
+                <i class='el-icon-cpu'></i>
+                <span class='name-class'>离线设备数</span>
+              </div>
+            </div>
+            <div class='basic-info-box-body'>{{ dashboardInfoObject.offlineDeviceCount }}</div>
           </div>
         </el-card>
       </el-col>

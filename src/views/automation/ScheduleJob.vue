@@ -165,27 +165,13 @@
         <el-form-item label='cron'>
           <el-col :span="24">
             <cron-input v-model="newObj.cron" @change="cornConfirm" @reset="cornReset"/>
-            <!--            <el-popover v-model="cronPopover">-->
-            <!--              <el-input-->
-            <!--                slot="reference"-->
-            <!--                @click="cronPopover=true"-->
-            <!--                v-model="newObj.cron"-->
-            <!--                placeholder="请输入定时策略"-->
-            <!--                >-->
-            <!--              </el-input>-->
-            <!--              <vcrontab-->
-            <!--                @hide="cronPopover=false"-->
-            <!--                @fill="cornConfirm"-->
-            <!--                :expression="newObj.cron"-->
-            <!--                >-->
-            <!--              </vcrontab>-->
-            <!--            </el-popover>-->
           </el-col>
         </el-form-item>
         <el-form-item label='控制内容'>
           <el-col :span="24">
             <dynamic-control-payload
               :product-fields="productFieldList"
+              :old-value="newObj.controlPayload"
               @callBack="payloadCallBack"></dynamic-control-payload>
           </el-col>
         </el-form-item>

@@ -169,7 +169,6 @@ export default {
       this.doGetDeviceLogPage()
     },
     sendDebugOrder() {
-      console.log(this.orderObject)
       var flag = true
       if (JSON.stringify(this.orderObject) === '{}') {
         flag = false
@@ -190,8 +189,10 @@ export default {
     this.doGetDebugDeviceList()
     const that = this
     this.intervalId = setInterval(() => {
-      that.doGetDeviceLogPage()
-    }, 2000)
+      if (this.deviceId !== '') {
+        that.doGetDeviceLogPage()
+      }
+    }, 10000)
   },
   beforeDestroy() {
     clearInterval(this.intervalId)

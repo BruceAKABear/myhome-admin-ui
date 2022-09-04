@@ -56,12 +56,15 @@ export default {
     productFields: {
       type: Array,
       require: true
+    },
+    oldValue: {
+      type: String,
+      require: true
     }
   },
   methods: {
     verifyPayload() {
       const payload = JSON.stringify(this.orderObject)
-      console.log(payload)
       if (payload !== '{}') {
         this.verifyStatus = true
         this.$emit('callBack', payload)
@@ -73,6 +76,13 @@ export default {
   watch: {
     productFields(newValue) {
       this.fields = newValue
+    },
+    oldValue(newValue) {
+      if (newValue) {
+        this.orderObject = JSON.parse(newValue)
+      } else {
+        this.orderObject = {}
+      }
     }
   }
 }

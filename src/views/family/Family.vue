@@ -2,14 +2,14 @@
   <div class="page-container">
     <el-row :gutter="20" style="padding-top: 30px">
       <el-col :lg="8" :push="6" :sm="12">
-        <el-form ref="familyForm" :model="familyObject" :rules="rules" label-width="100px">
-          <el-form-item label="家庭名" prop="name">
+        <el-form ref="familyForm" :model="familyObject" :rules="rules" label-width="150px">
+          <el-form-item :label="$t('family.name')" prop="name">
             <el-input v-model="familyObject.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="创建时间" prop="createTime">
+          <el-form-item :label="$t('family.createTime')" prop="createTime">
             <el-input v-model="familyObject.createTime" autocomplete="off" disabled></el-input>
           </el-form-item>
-          <el-form-item label="更新时间" prop="updateTime">
+          <el-form-item :label="$t('family.updateTime')" prop="updateTime">
             <el-input v-model="familyObject.updateTime" autocomplete="off" disabled></el-input>
           </el-form-item>
           <el-form-item label="天气APPID" prop="appId">
@@ -18,18 +18,18 @@
           <el-form-item label="天气secret" prop="appSecret">
             <el-input v-model="familyObject.appSecret" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="楼层数">
+          <el-form-item :label="$t('family.floorCount')">
             <el-input v-model="familyObject.floorCount" disabled></el-input>
           </el-form-item>
-          <el-form-item label="房间数">
+          <el-form-item :label="$t('family.roomCount')">
             <el-input v-model.number="familyObject.roomCount" disabled></el-input>
           </el-form-item>
-          <el-form-item label="设备数">
+          <el-form-item :label="$t('family.deviceCount')">
             <el-input v-model.number="familyObject.deviceCount" disabled></el-input>
           </el-form-item>
         </el-form>
         <div style="margin-top: 40px">
-          <el-button style="width: 100%" type="primary" @click="updateFamily">更新</el-button>
+          <el-button style="width: 100%" type="primary" @click="updateFamily">{{$t('family.updateButton')}}</el-button>
         </div>
 
       </el-col>

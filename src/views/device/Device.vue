@@ -18,7 +18,12 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <el-select v-model="pageParam.productId" clearable placeholder="请选择产品" size="mini" style="margin-left: 10px">
+        <el-select
+          v-model="pageParam.productId"
+          clearable
+          placeholder="请选择产品"
+          size="mini"
+          style="margin-left: 10px">
           <el-option
             v-for="item in productList"
             :key="item.id"
@@ -116,11 +121,18 @@
       <el-table-column
         align='center'
         label='操作'
-        width='180'
+        width='190'
         fixed="right"
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
+            <el-button
+              size='mini'
+              type='primary'
+              v-show="scope.row.canUpdateFirmware&&scope.row.online"
+              @click='deviceFirmwareUpdate(scope.row)'>
+              升级
+            </el-button>
             <el-button size='mini' type='warning' @click='showUpdate(scope.row)'>修改</el-button>
             <el-button
               size='mini'
@@ -227,7 +239,7 @@
 </template>
 
 <script>
-import { addUpdateApi, deleteDeviceApi, devicePageApi } from '@/api/Device'
+import { addUpdateApi, deleteDeviceApi, devicePageApi, singleDeviceFirmwareUpdateApi } from '@/api/Device'
 import { floorListApi } from '@/api/Floor'
 import { productListApi } from '@/api/DeviceManage'
 import { roomListApi } from '@/api/Room'
@@ -334,6 +346,14 @@ export default {
         } else {
           this.$notify.warning('请检查信息是否填写正确')
         }
+      })
+    },
+    deviceFirmwareUpdate(rowData) {
+      this.$confirm('是否确定升级设备固件', '提示', { type: 'warning' }).then(() => {
+        singleDeviceFirmwareUpdateApi(rowData).then(res => {
+          this.$notify.success('设备固件更新命名下发成功')
+          this.doPageQuery()
+        })
       })
     },
     showUpdate(rowData) {

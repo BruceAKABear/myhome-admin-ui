@@ -8,16 +8,12 @@ import 'element-ui/lib/theme-chalk/display.css'
 import * as echarts from 'echarts'
 import CopyRight from '@/components/CopyRight'
 
-import JsonViewer from 'vue-json-viewer'
-
 import i18n from '@/lang'
 import Element from 'element-ui'
 
 Vue.component('CopyRight', CopyRight)
 
 Vue.prototype.$echarts = echarts
-
-Vue.use(JsonViewer)
 
 Vue.config.productionTip = false
 

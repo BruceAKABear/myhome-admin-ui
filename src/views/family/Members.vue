@@ -87,7 +87,7 @@
             </el-button>
             <el-button size='mini' type='info' @click='showUpdate(scope.row)'>修改</el-button>
             <el-button
-              :disabled='scope.row.id===$store.state.userInfo.id||scope.row.superAdmin'
+              :disabled='scope.row.id===$store.state.userInfo.id'
               size='mini'
               type='danger'
               @click='deleteUser(scope.row)'>删除

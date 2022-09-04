@@ -60,6 +60,7 @@ export default {
           getUserInfo().then(result => {
             if (result.status) {
               this.$store.commit('setUserInfo', result.data)
+              this.$i18n.locale = result.data.selectLang
               // 请求是否是第一次登录系统
               checkIsFirst().then(res => {
                 if (res.status) {
