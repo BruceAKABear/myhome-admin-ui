@@ -6,16 +6,12 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 屏幕宽度
-    screenWidth: window.innerWidth,
-    // 用户token
+    screenWidth: window.innerWidth, // 用户token
     userToken: '',
-    // 用户信息
-    userInfo: {},
-    // 已经被选中的二级菜单
-    secondMenus: [],
-    // 侧边菜单是否收起
-    collapse: false,
-    firstActivePath: '/dashboard'
+    menuData: [], // 用户信息
+    userInfo: {}, // 已经被选中的二级菜单
+    secondMenus: [], // 侧边菜单是否收起
+    collapse: false
   },
   mutations: {
     setScreenWidth(store, width) {
@@ -32,6 +28,9 @@ export default new Vuex.Store({
       store.userToken = token
       window.sessionStorage.setItem('userToken', token)
     },
+    setMenuData(store, menuData) {
+      store.menuData = menuData
+    },
     /**
      * 保存用户信息
      * @param store
@@ -46,9 +45,6 @@ export default new Vuex.Store({
     },
     setCollapse(state, flag) {
       state.collapse = flag
-    },
-    setFirstActivePath(state, fpath) {
-      state.firstActivePath = fpath
     }
   },
   actions: {},

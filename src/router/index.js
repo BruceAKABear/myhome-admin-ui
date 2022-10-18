@@ -99,7 +99,12 @@ const routes = [{
         path: '/system/personal',
         meta: { title: '个人信息' },
         component: () => import('@/views/system/Personal')
-      }]
+      }, {
+        path: '/system/rolemanage',
+        meta: { title: '角色管理' },
+        component: () => import('@/views/system/RoleManage')
+      }
+      ]
     }]
 }, {
   path: '*',

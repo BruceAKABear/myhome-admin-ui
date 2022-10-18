@@ -54,11 +54,11 @@
 
       <el-table-column
         align='center'
-        label='户主'
+        label='管理员'
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.houseHolder?'success':'danger'" effect="dark" size="small">{{
-              scope.row.houseHolder ? '是' : '否'
+          <el-tag :type="scope.row.superAdmin?'success':'danger'" effect="dark" size="small">{{
+              scope.row.superAdmin ? '是' : '否'
             }}
           </el-tag>
         </template>
@@ -83,7 +83,7 @@
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
-            <el-button size='mini' type='warning' @click='enable(scope.row)'>{{ scope.row.enable ? '停用' : '启用' }}
+            <el-button size='mini' type='warning' @click='enable(scope.row)' :disabled="scope.row.superAdmin">{{ scope.row.enable ? '停用' : '启用' }}
             </el-button>
             <el-button size='mini' type='info' @click='showUpdate(scope.row)'>修改</el-button>
             <el-button
@@ -114,23 +114,6 @@
         label-width='120px'
         status-icon
       >
-        <el-form-item label='成员类型' prop="houseHolder">
-          <el-col :span="24">
-            <el-select
-              v-model='newObj.houseHolder'
-              placeholder='请选择成员类型'
-              style='width: 100%'>
-              <el-option
-                :value='true'
-                label='户主'>
-              </el-option>
-              <el-option
-                :value='false'
-                label='非户主'>
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-form-item>
         <el-form-item label='昵称' prop='name'>
           <el-col :span="24">
             <el-input
@@ -170,6 +153,21 @@
               :placeholder="newObj.id?'不填写密码则不修改':'请输入密码'"/>
           </el-col>
         </el-form-item>
+        <el-form-item label='角色' prop="roleId">
+          <el-col :span="24">
+            <el-select
+              v-model='newObj.roleId'
+              placeholder='请选择成员类型'
+              style='width: 100%'>
+              <el-option
+                v-for="role in roleList"
+                :key="role.id"
+                :value='role.id'
+                :label='role.name'>
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
       </el-form>
       <div slot='footer' class='dialog-footer'>
         <el-button @click='dialogVisible = false '>取 消</el-button>
@@ -181,6 +179,7 @@
 
 <script>
 import { membersAddApi, membersDeleteApi, membersEnableApi, membersPageApi } from '@/api/FamilyMembers'
+import { roleListApi } from '@/api/SystemApi'
 
 export default {
   name: 'Room',
@@ -231,6 +230,7 @@ export default {
         page: 1,
         size: 14
       },
+      roleList: [],
       pageResult: {},
       newObj: {},
       dialogVisible: false,
@@ -261,10 +261,10 @@ export default {
             validator: passwordValidator
           }
         ],
-        houseHolder: [
+        roleId: [
           {
             required: true,
-            message: '成员类型必选',
+            message: '角色必须选择',
             trigger: 'blur'
           }
         ],
@@ -343,11 +343,17 @@ export default {
           }
         })
       })
+    },
+    doGetRoleList() {
+      roleListApi().then(res => {
+        this.roleList = res.data
+      })
     }
 
   },
   mounted() {
     this.doPageQuery()
+    this.doGetRoleList()
   }
 }
 </script>

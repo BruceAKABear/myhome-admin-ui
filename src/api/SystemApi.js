@@ -3,6 +3,8 @@ import { createAPI } from '@/utils/request'
 // 登录
 export const login = data => createAPI('/user/login', 'post', data)
 
+export const getPerm = data => createAPI('/permission/getPerm', 'get', data)
+
 export const checkIsFirst = data => createAPI('/family/checkIsFirst', 'get', data)
 
 // 获取用户信息
@@ -12,6 +14,13 @@ export const updateSelectLang = data => createAPI('/user/updateSelectLang', 'pos
 export const updateUserInfoApi = data => createAPI('/sysUser/updateUserInfo', 'post', data)
 
 export const basicSystemInfoApi = data => createAPI('/systemInfo/basicInfo', 'get', data)
+
+// 权限
+export const rolePageApi = data => createAPI('/permission/rolePage', 'get', data)
+export const roleListApi = data => createAPI('/permission/roleList', 'get', data)
+export const allPermTreeApi = data => createAPI('/permission/allPermTree', 'get', data)
+export const roleAddApi = data => createAPI('/permission/roleAdd', 'post', data)
+export const roleDelApi = data => createAPI(`/permission/roleDel/${data}`, 'delete', data)
 
 // ---------------------用户相关----------------------------
 // 用户分页查询
@@ -28,8 +37,6 @@ export const rolePageQueryApi = data => createAPI('/sysRole/page', 'get', data)
 export const addOrUpdateRoleApi = data => createAPI('/sysRole/addOrUpdate', 'post', data)
 // 删除角色
 export const delRoleApi = data => createAPI('/sysRole/delete', 'delete', data)
-// 查询角色列表（供下拉使用）
-export const roleListApi = data => createAPI('/sysRole/roleList', 'get', data)
 
 // --------------权限相关-------------------
 export const permPageQueryApi = data => createAPI('/sysPermission/page', 'get', data)

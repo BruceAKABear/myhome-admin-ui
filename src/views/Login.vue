@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { checkIsFirst, getUserInfo, login } from '@/api/SystemApi'
+import { checkIsFirst, getPerm, getUserInfo, login } from '@/api/SystemApi'
 
 export default {
   name: 'Login',
@@ -57,6 +57,11 @@ export default {
       } else {
         login(this.loginObject).then(res => {
           this.$store.commit('setUserToken', res.data)
+          getPerm().then(permRes => {
+            console.log(permRes)
+            this.$store.commit('setMenuData', permRes.data.menuPerms)
+          })
+
           getUserInfo().then(result => {
             if (result.status) {
               this.$store.commit('setUserInfo', result.data)

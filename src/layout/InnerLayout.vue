@@ -16,10 +16,10 @@
         <el-menu-item
           v-for='lastMenu in $store.state.secondMenus'
           :key='lastMenu.id'
-          :index='lastMenu.path'
+          :index='lastMenu.symbol'
         >
-          <i :class="lastMenu.icon"></i>
-          <span slot='title'>{{ lastMenu.name }}</span>
+          <i :class="lastMenu.menuIcon"></i>
+          <span slot='title'>{{ $t('permMenu.' + lastMenu.symbol) }}</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
