@@ -237,7 +237,7 @@ export default {
   background-color: #71d5a1 !important;
 }
 
-/deep/ .el-submenu__title:hover {
+::v-deep .el-submenu__title:hover {
   background-color: #71d5a1 !important;
 
 }
