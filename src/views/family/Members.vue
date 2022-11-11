@@ -54,7 +54,7 @@
 
       <el-table-column
         align='center'
-        label='管理员'
+        label='超管'
       >
         <template slot-scope="scope">
           <el-tag :type="scope.row.superAdmin?'success':'danger'" effect="dark" size="small">{{
@@ -63,7 +63,12 @@
           </el-tag>
         </template>
       </el-table-column>
-
+      <el-table-column
+        align='center'
+        label='角色'
+        prop='createTime'
+        show-overflow-tooltip
+      />
       <el-table-column
         align='center'
         label='创建时间'
@@ -83,9 +88,11 @@
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
-            <el-button size='mini' type='warning' @click='enable(scope.row)' :disabled="scope.row.superAdmin">{{ scope.row.enable ? '停用' : '启用' }}
+            <el-button size='mini' type='warning' @click='enable(scope.row)' :disabled="scope.row.superAdmin">
+              {{ scope.row.enable ? '停用' : '启用' }}
             </el-button>
-            <el-button size='mini' type='info' @click='showUpdate(scope.row)'>修改</el-button>
+            <el-button size='mini' type='info' @click='showUpdate(scope.row)' :disabled="scope.row.superAdmin">修改
+            </el-button>
             <el-button
               :disabled='scope.row.id===$store.state.userInfo.id'
               size='mini'
@@ -106,69 +113,95 @@
       />
     </div>
 
-    <el-dialog :visible.sync='dialogVisible' :title="newObj.id?'修改成员信息':'新增成员'" width="600px">
-      <el-form
-        ref='addForm'
-        :model='newObj'
-        :rules="rules"
-        label-width='120px'
-        status-icon
-      >
-        <el-form-item label='昵称' prop='name'>
-          <el-col :span="24">
-            <el-input
-              prefix-icon="el-icon-user-solid"
-              v-model="newObj.name"
-              placeholder="请输入成员昵称"
-              autocomplete="off"></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label='邮箱' prop='email'>
-          <el-col :span="24">
-            <el-input
-              prefix-icon="el-icon-s-cooperation"
-              v-model='newObj.email'
-              autocomplete='off'
-              type="email"
-              placeholder="请输入成员邮箱"/>
-          </el-col>
-        </el-form-item>
-        <el-form-item label='密码' prop='passw'>
-          <el-col :span="24">
-            <el-input
-              prefix-icon="el-icon-lock"
-              v-model='newObj.passw'
-              autocomplete='off'
-              show-password
-              :placeholder="newObj.id?'不填写密码则不修改':'请输入密码'"/>
-          </el-col>
-        </el-form-item>
-        <el-form-item label='重复密码' prop="repassword">
-          <el-col :span="24">
-            <el-input
-              prefix-icon="el-icon-lock"
-              v-model='newObj.repassword'
-              autocomplete='off'
-              show-password
-              :placeholder="newObj.id?'不填写密码则不修改':'请输入密码'"/>
-          </el-col>
-        </el-form-item>
-        <el-form-item label='角色' prop="roleId">
-          <el-col :span="24">
-            <el-select
-              v-model='newObj.roleId'
-              placeholder='请选择成员类型'
-              style='width: 100%'>
-              <el-option
-                v-for="role in roleList"
-                :key="role.id"
-                :value='role.id'
-                :label='role.name'>
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-form-item>
-      </el-form>
+    <el-dialog :visible.sync='dialogVisible' :show-close="false">
+
+      <el-row :gutter="10">
+        <el-col :span="12">
+          <el-form
+            ref='addForm'
+            :model='newObj'
+            :rules="rules"
+            label-width='120px'
+            status-icon
+          >
+            <el-form-item label='昵称' prop='name'>
+              <el-col :span="24">
+                <el-input
+                  prefix-icon="el-icon-user-solid"
+                  v-model="newObj.name"
+                  placeholder="请输入成员昵称"
+                  autocomplete="off"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label='邮箱' prop='email'>
+              <el-col :span="24">
+                <el-input
+                  prefix-icon="el-icon-s-cooperation"
+                  v-model='newObj.email'
+                  autocomplete='off'
+                  type="email"
+                  placeholder="请输入成员邮箱"/>
+              </el-col>
+            </el-form-item>
+            <el-form-item label='密码' prop='passw'>
+              <el-col :span="24">
+                <el-input
+                  prefix-icon="el-icon-lock"
+                  v-model='newObj.passw'
+                  autocomplete='off'
+                  show-password
+                  :placeholder="newObj.id?'不填写密码则不修改':'请输入密码'"/>
+              </el-col>
+            </el-form-item>
+            <el-form-item label='重复密码' prop="repassword">
+              <el-col :span="24">
+                <el-input
+                  prefix-icon="el-icon-lock"
+                  v-model='newObj.repassword'
+                  autocomplete='off'
+                  show-password
+                  :placeholder="newObj.id?'不填写密码则不修改':'请输入密码'"/>
+              </el-col>
+            </el-form-item>
+            <el-form-item label='角色' prop="roleId">
+              <el-col :span="24">
+                <el-select
+                  v-model='newObj.roleId'
+                  placeholder='请选择成员类型'
+                  style='width: 100%'>
+                  <el-option
+                    v-for="role in roleList"
+                    :key="role.id"
+                    :value='role.id'
+                    :label='role.name'>
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="12">
+          <el-tabs type="border-card" @tab-click="floorSelect">
+            <el-tab-pane :label="floor.name" v-for="floor in floorList" :key="floor.id">
+              <el-tree
+                :data="roomDeviceTree"
+                :props="{
+                label:'name'
+                }"
+                :filter-node-method="myNodeFilter"
+                :default-checked-keys="newObj.deviceIds"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                ref="mtree"
+                highlight-current
+              >
+              </el-tree>
+            </el-tab-pane>
+          </el-tabs>
+        </el-col>
+      </el-row>
+
       <div slot='footer' class='dialog-footer'>
         <el-button @click='dialogVisible = false '>取 消</el-button>
         <el-button type='primary' @click='saveOrUpdate'>保 存</el-button>
@@ -180,6 +213,8 @@
 <script>
 import { membersAddApi, membersDeleteApi, membersEnableApi, membersPageApi } from '@/api/FamilyMembers'
 import { roleListApi } from '@/api/SystemApi'
+import { floorListApi } from '@/api/Floor'
+import { roomDeviceTreeApi } from '@/api/Device'
 
 export default {
   name: 'Room',
@@ -234,6 +269,7 @@ export default {
       pageResult: {},
       newObj: {},
       dialogVisible: false,
+      floorList: [],
       rules: {
         name: [
           {
@@ -274,7 +310,8 @@ export default {
             validator: repasswordValidator
           }
         ]
-      }
+      },
+      roomDeviceTree: []
     }
   },
   methods: {
@@ -288,8 +325,24 @@ export default {
       })
     },
     saveOrUpdate() {
+      const checkedDevice = []
+      this.$refs.mtree.forEach(item => {
+        const checkedNodes = item.getCheckedNodes()
+        if (checkedNodes.length !== 0) {
+          checkedNodes.forEach(node => {
+            if (!node.children) {
+              checkedDevice.push(node.id)
+            }
+          })
+        }
+      })
+      if (checkedDevice.length === 0) {
+        this.$notify.warning('可控设备必选')
+        return
+      }
       this.$refs.addForm.validate(r => {
         if (r) {
+          this.newObj.deviceIds = checkedDevice
           membersAddApi(this.newObj).then(res => {
             if (res.status) {
               this.$notify.success('操作成功')
@@ -320,16 +373,21 @@ export default {
     },
     showUpdate(rowData) {
       this.newObj = rowData
+      this.dialogVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.clearValidate()
+        const treeList = this.$refs.mtree
+        treeList.forEach(item => {
+          item.setCheckedKeys(rowData.deviceIds)
+          item.filter(this.floorList[0].id)
+        })
       })
-
-      this.dialogVisible = true
     },
     showAddDia() {
       this.dialogVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.clearValidate()
+        this.floorSelect()
       })
     },
     enable(rowData) {
@@ -348,12 +406,41 @@ export default {
       roleListApi().then(res => {
         this.roleList = res.data
       })
+    },
+    doGetFloorList() {
+      floorListApi().then(res => {
+        this.floorList = res.data
+      })
+    },
+    doGetRoomDeviceList() {
+      roomDeviceTreeApi().then(res => {
+        this.roomDeviceTree = res.data
+      })
+    },
+    floorSelect(data) {
+      let floor
+      if (data) {
+        floor = this.floorList[data.index]
+      } else {
+        floor = this.floorList[0]
+      }
+      if (this.$refs.mtree) {
+        const treeList = this.$refs.mtree
+        treeList.forEach(item => {
+          item.filter(floor.id)
+        })
+      }
+    },
+    myNodeFilter(value, data, node) {
+      return node.data.floorId === value
     }
 
   },
   mounted() {
     this.doPageQuery()
     this.doGetRoleList()
+    this.doGetFloorList()
+    this.doGetRoomDeviceList()
   }
 }
 </script>

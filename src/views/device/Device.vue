@@ -129,7 +129,7 @@
             <el-button
               size='mini'
               type='primary'
-              v-show="scope.row.canUpdateFirmware&&scope.row.online"
+              :disabled="!(scope.row.canUpdateFirmware&&scope.row.online)"
               @click='deviceFirmwareUpdate(scope.row)'>
               升级
             </el-button>
@@ -164,6 +164,7 @@
         <el-form-item label='所属楼层' prop='floorId'>
           <el-col :span="24">
             <el-select
+              @change="floorSelect"
               v-model="newObj.floorId"
               :disabled="newObj.id&&newObj.id!==''"
               placeholder="请选择楼层"
@@ -202,23 +203,6 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label='只有户主可见' prop='onlyHolderCanSee' style="width: 100%">
-          <el-col :span='24'>
-            <el-select
-              v-model='newObj.onlyHolderCanSee'
-              placeholder='请选择是否只有户主可见'
-              style='width: 100%'>
-              <el-option
-                :value='true'
-                label='是'>
-              </el-option>
-              <el-option
-                :value='false'
-                label='否'>
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-form-item>
         <el-form-item label='设备名' prop='nickName'>
           <el-col :span="24">
             <el-input v-model='newObj.nickName' autocomplete='off'/>
@@ -242,7 +226,7 @@
 import { addUpdateApi, deleteDeviceApi, devicePageApi, singleDeviceFirmwareUpdateApi } from '@/api/Device'
 import { floorListApi } from '@/api/Floor'
 import { productListApi } from '@/api/DeviceManage'
-import { roomListApi } from '@/api/Room'
+import { roomListByFloorIdApi } from '@/api/Room'
 
 export default {
   name: 'Device',
@@ -313,11 +297,6 @@ export default {
         this.floorList = res.data
       })
     },
-    doGetRoomList() {
-      roomListApi().then(res => {
-        this.roomList = res.data
-      })
-    },
     doGetProductList() {
       productListApi().then(res => {
         this.productList = res.data
@@ -367,12 +346,16 @@ export default {
           this.doPageQuery()
         })
       })
+    },
+    floorSelect(data) {
+      roomListByFloorIdApi({ floorId: data }).then(res => {
+        this.roomList = res.data
+      })
     }
   },
   created() {
     this.doPageQuery()
     this.doGetFloorList()
-    this.doGetRoomList()
     this.doGetProductList()
   }
 }

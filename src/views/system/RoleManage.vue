@@ -72,7 +72,7 @@
             <el-button
               size='mini'
               type='danger'
-              v-show="scope.row.userCount==0"
+              :disabled="scope.row.userCount!==0"
               @click='deleteRole(scope.row)'>删除
             </el-button>
           </div>

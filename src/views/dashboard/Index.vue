@@ -1,6 +1,6 @@
 <template>
   <div class='page-container'>
-    <el-row :gutter='30' >
+    <el-row :gutter='30'>
       <el-col :span='4'>
         <el-card :body-style="{ padding: '0px' }" shadow="hover" style="border-radius: 15px">
           <div class=' basic-info-box'>
@@ -83,8 +83,20 @@
 
     <el-row :gutter='30'>
       <el-col :span='24'>
-        <div style="background-color: #FFFFFF">
-          1
+        <div style="background-color: #FFFFFF;height: 600px">
+          <div style="position: absolute;top: 50px;left: 50px;">
+            <el-tabs v-model="selectedFloor" type="card" tab-position="left">
+              <el-tab-pane
+                v-for="item in floorList"
+                :key="item.id"
+                :label="item.name"
+                :name="item.id"
+              >
+                {{ item.content }}
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+          <div ref="threeContainer" id="ThreeJS" style="height: 600px"></div>
         </div>
       </el-col>
     </el-row>
@@ -102,25 +114,143 @@
 </template>
 
 <script>
+import * as THREE from 'three'
 import * as echarts from 'echarts'
 import { dashboardInfoApi } from '@/api/Dashboard'
 import 'element-ui/lib/theme-chalk/display.css'
+import { floorListApi } from '@/api/Floor'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export default {
   name: 'Index',
   data() {
     return {
-      dashboardInfoObject: {}
+      dashboardInfoObject: {},
+      floorList: [],
+      selectedFloor: '',
+      scene: null,
+      camera: null,
+      renderer: null,
+      textloader: null,
+      matArrayB: [],
+      matArrayA: []
     }
   },
   created() {
+    this.doGetFloorList()
     this.loadData()
+    // this.initEngine()
+  },
+  watch: {
+    selectedFloor(ov, nv) {
+      console.log(nv)
+    }
   },
   methods: {
     loadData() {
       dashboardInfoApi().then(res => {
         this.dashboardInfoObject = res.data
       })
+    },
+    doGetFloorList() {
+      floorListApi().then(res => {
+        this.floorList = res.data
+        this.selectedFloor = this.floorList[0].id
+      })
+    },
+    initThree() {
+      const container = this.$refs.threeContainer
+      const offsetHeight = container.offsetHeight
+      const offsetWidth = container.offsetWidth
+
+      this.scene = new THREE.Scene()
+      this.scene.fog = new THREE.Fog(0x005577, 1, 2800)
+      this.textloader = new THREE.TextureLoader()
+
+      // 相机
+      this.camera = new THREE.PerspectiveCamera(45, offsetWidth / offsetHeight, 0.01, 10000)
+      this.camera.position.set(860, 470, 720)
+      this.camera.lookAt(this.scene.position)
+      this.scene.add(this.camera)
+
+      const axisHelper = new THREE.AxesHelper(100, 100)
+      this.scene.add(axisHelper)
+
+      // 环境光
+      const light = new THREE.AmbientLight(0xffffff, 0.5) // soft white light
+      this.scene.add(light)
+
+      // // 平行光源
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+      directionalLight.position.set(200, 600, 200)
+      this.scene.add(directionalLight)
+
+      this.createFloor()
+      // const geometry = new THREE.BoxBufferGeometry(300, 300, 300)
+      // const material = new THREE.MeshPhongMaterial({
+      //   color: 0xff0000
+      // })
+      // const mesh = new THREE.Mesh(geometry, material)
+      // this.scene.add(mesh)
+
+      this.renderer = new THREE.WebGLRenderer({
+        antialias: true
+      })
+      this.renderer.setClearColor('#4682B4', 1)
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      this.renderer.setSize(offsetWidth, offsetHeight)
+      document.getElementById('ThreeJS').appendChild(this.renderer.domElement)
+
+      // OrbitControls
+      const aa = new OrbitControls(this.camera, this.renderer.domElement)
+      console.log('aa', aa)
+      this.renderer.render(this.scene, this.camera)
+    },
+    /**
+     * threejs 渲染
+     */
+    threeJsRender() {
+      this.renderer.render(this.scene, this.camera)
+    },
+    createFloor() {
+      const loader = new THREE.TextureLoader()
+      console.log('=========-------')
+      loader.load('../assets/three/floor.jpg', function(texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+        texture.repeat.set(10, 10)
+        const floorGeometry = new THREE.BoxGeometry(this.width, this.height, 1)
+        const floorMaterial = new THREE.MeshBasicMaterial({
+          map: texture,
+          side: THREE.DoubleSide
+        })
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial)
+        // floor.position.y = -0.5
+        // floor.rotation.x = Math.PI / 2
+        this.scene.add(floor)
+
+        console.log('=========', floor)
+      })
+
+      // 茶色：0x58ACFA   透明玻璃色：0XECF1F3
+      // const glass_material = new THREE.MeshBasicMaterial({
+      //   color: 0XECF1F3
+      // })
+      // glass_material.opacity = 0.4
+      // glass_material.transparent = true
+
+      // var left_wall = returnWallObject(20, 200, 1100, 0, matArrayB, -801,
+      //   100, 0)
+      // var left_cube = returnWallObject(20, 110, 1100, 0, matArrayB, -801,
+      //   100, 0)
+      // createResultBsp(left_wall, left_cube, 1)
+      // createCubeWall(1, 110, 1100, 0, glass_material, -801, 100, 0)
+      //
+      // var right_wall = returnWallObject(20, 200, 1100, 1, matArrayB, 801,
+      //   100, 0)
+      // var right_cube = returnWallObject(20, 110, 1100, 0, matArrayB, 801,
+      //   100, 0)
+      // createResultBsp(right_wall, right_cube, 1)
+      // createCubeWall(1, 110, 1100, 0, glass_material, 801, 100, 0)
     }
   },
   mounted() {
@@ -146,6 +276,8 @@ export default {
     }
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option)
+
+    this.initThree()
   }
 }
 </script>
