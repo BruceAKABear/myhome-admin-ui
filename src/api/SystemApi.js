@@ -9,7 +9,7 @@ export const checkIsFirst = data => createAPI('/family/checkIsFirst', 'get', dat
 
 // 获取用户信息
 export const getUserInfo = data => createAPI('/user/info', 'get', data)
-export const updateSelectLang = data => createAPI('/user/updateSelectLang', 'post', data)
+export const updateLang = data => createAPI('/user/updateLang', 'get', data)
 
 export const updateUserInfoApi = data => createAPI('/sysUser/updateUserInfo', 'post', data)
 

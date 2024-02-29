@@ -7,3 +7,4 @@ export const debugDeviceListApi = data => createAPI('/device/debugDeviceList', '
 export const sendDebugApi = data => createAPI('/device/sendDebug', 'post', data)
 export const singleDeviceFirmwareUpdateApi = data => createAPI('/device/singleDeviceFirmwareUpdate', 'post', data)
 export const roomDeviceTreeApi = data => createAPI('/device/roomDeviceTree', 'get', data)
+export const familyDeviceTreeApi = data => createAPI('/device/familyDeviceTree', 'get', data)

@@ -2,20 +2,27 @@
   <div class="page-container">
     <div class='table-header-box'>
       <div style='display: flex;align-items: center'>
-        <el-select v-model="deviceId" clearable placeholder="请选择设备" size="mini" style="margin-left: 10px">
+        <el-select
+          v-model="deviceId"
+          clearable
+          filterable
+          placeholder="请选择设备"
+          size="mini"
+          style="margin-left: 10px">
           <el-option
             v-for="item in deviceList"
             :key="item.id"
-            :label="item.nickName"
+            :disabled="!item.online"
+            :label="item.name"
             :value="item.id">
-            <span style="float: left">{{ item.nickName }}</span>
-            <span :style="{float: 'right', color: item.online?'#19BE6B':'#F56C6C', fontSize: '13px'}">{{
+            <span style="float: left">{{ item.name }}</span>
+            <span :style="{float: 'right', color: item.online?'#67C23A':'#F56C6C', fontSize: '13px'}">{{
                 item.online ? '在线' : '离线'
               }}</span>
           </el-option>
         </el-select>
-        <el-button icon='el-icon-search' size='mini' style='margin-left: 10px' type='primary' @click='flashDevice'>
-          刷新
+        <el-button size='mini' style='margin-left: 10px' type='primary' @click='flashDevice'>
+          获取全部设备
         </el-button>
       </div>
     </div>
@@ -36,31 +43,21 @@
             <div v-for="item in categoryFieldList" :key="item.id" style="margin-top: 30px">
               <el-row :gutter="10">
                 <el-col :span="12" style="height: 28px;display: flex; align-items: center">
-                  <span>控制字段：{{ item.field }}</span>
+                  <el-row :gutter="10" style="width: 100%">
+                    <el-col :span="12"><span>显示：{{ item.label }}</span></el-col>
+                    <el-col :span="12"><span>字段：{{ item.field }}</span></el-col>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row style="display: flex;align-items: center">
                     <el-col :span="8">
                       <div
                         style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 28px;">
-                        <span>控制值：</span>
+                        <span>值：</span>
                       </div>
                     </el-col>
                     <el-col :span="16">
-                      <el-select
-                        size="mini"
-                        v-model="orderObject[item.field]"
-                        placeholder='请选择布尔值'
-                        style='width: 100%'>
-                        <el-option
-                          :value='true'
-                          label='true'>
-                        </el-option>
-                        <el-option
-                          :value='false'
-                          label='false'>
-                        </el-option>
-                      </el-select>
+                      <el-input size="mini" v-model="orderObject[item.field]" placeholder="请输入内容"></el-input>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -175,6 +172,7 @@ export default {
       }
       if (flag) {
         this.orderObject.deviceId = this.deviceId
+        console.log('----------->', this.orderObject)
         sendDebugApi(this.orderObject).then(res => {
           if (res.status) {
             this.$notify.success('操作成功')
@@ -187,12 +185,12 @@ export default {
   },
   mounted() {
     this.doGetDebugDeviceList()
-    const that = this
-    this.intervalId = setInterval(() => {
-      if (this.deviceId !== '') {
-        that.doGetDeviceLogPage()
-      }
-    }, 10000)
+    // const that = this
+    // this.intervalId = setInterval(() => {
+    //   if (this.deviceId !== '') {
+    //     that.doGetDeviceLogPage()
+    //   }
+    // }, 10000)
   },
   beforeDestroy() {
     clearInterval(this.intervalId)

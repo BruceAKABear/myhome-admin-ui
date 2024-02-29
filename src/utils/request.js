@@ -27,8 +27,7 @@ instance.interceptors.response.use(response => {
     return response.data
   } else {
     console.log(type)
-    if (code === 10002 || code === 10004) {
-      // token失效需要重新登录
+    if (code === 2) {
       router.push('/login')
     } else {
       // 判断是警告还是错误

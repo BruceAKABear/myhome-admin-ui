@@ -61,66 +61,66 @@
 
     <el-row :gutter="12" style="margin-top: 10px">
       <el-col :span="8" class="hidden-md-and-down">
-        <el-card shadow="always" header="EMQX信息" :body-style="{ padding: '10px' }">
-          <div style='width: 100%;height:300px;'>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">Erlang/OTP 版本:</el-col>
-              <el-col :span="12">{{ systemData.emqxInfo.otp_release ? systemData.emqxInfo.otp_release : '' }}</el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">可用进程数:</el-col>
-              <el-col :span="12">{{
-                  systemData.emqxInfo.process_available ? systemData.emqxInfo.process_available : ''
-                }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">已用程数:</el-col>
-              <el-col :span="12">{{ systemData.emqxInfo.process_used ? systemData.emqxInfo.process_used : '' }}</el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">EMQX版本:</el-col>
-              <el-col :span="12">{{ systemData.emqxInfo.version ? systemData.emqxInfo.version : '' }}</el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">EMQX 运行时间:</el-col>
-              <el-col :span="12">{{
-                  systemData.emqxInfo.uptime ? formatDuring(systemData.emqxInfo.uptime) : ''
-                }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">系统内存:</el-col>
-              <el-col :span="12">
-                {{ systemData.emqxInfo.memory_total ? systemData.emqxInfo.memory_total : 0 }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">已用内存:</el-col>
-              <el-col :span="12">
-                {{ systemData.emqxInfo.memory_used ? systemData.emqxInfo.memory_used : 0 }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">1分钟平均负载:</el-col>
-              <el-col :span="12">
-                {{ systemData.emqxInfo.load1 ? systemData.emqxInfo.load1 : 0 }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">5分钟平均负载:</el-col>
-              <el-col :span="12">
-                {{ systemData.emqxInfo.load5 ? systemData.emqxInfo.load5 : 0 }}
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" class="item-padding">
-              <el-col :span="12">15分钟平均负载:</el-col>
-              <el-col :span="12">
-                {{ systemData.emqxInfo.load15 ? systemData.emqxInfo.load15 : 0 }}
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
+<!--        <el-card shadow="always" header="EMQX信息" :body-style="{ padding: '10px' }">-->
+<!--          <div style='width: 100%;height:300px;'>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">Erlang/OTP 版本:</el-col>-->
+<!--              <el-col :span="12">{{ systemData.emqxInfo.otp_release ? systemData.emqxInfo.otp_release : '' }}</el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">可用进程数:</el-col>-->
+<!--              <el-col :span="12">{{-->
+<!--                  systemData.emqxInfo.process_available ? systemData.emqxInfo.process_available : ''-->
+<!--                }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">已用程数:</el-col>-->
+<!--              <el-col :span="12">{{ systemData.emqxInfo.process_used ? systemData.emqxInfo.process_used : '' }}</el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">EMQX版本:</el-col>-->
+<!--              <el-col :span="12">{{ systemData.emqxInfo.version ? systemData.emqxInfo.version : '' }}</el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">EMQX 运行时间:</el-col>-->
+<!--              <el-col :span="12">{{-->
+<!--                  systemData.emqxInfo.uptime ? formatDuring(systemData.emqxInfo.uptime) : ''-->
+<!--                }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">系统内存:</el-col>-->
+<!--              <el-col :span="12">-->
+<!--                {{ systemData.emqxInfo.memory_total ? systemData.emqxInfo.memory_total : 0 }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">已用内存:</el-col>-->
+<!--              <el-col :span="12">-->
+<!--                {{ systemData.emqxInfo.memory_used ? systemData.emqxInfo.memory_used : 0 }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">1分钟平均负载:</el-col>-->
+<!--              <el-col :span="12">-->
+<!--                {{ systemData.emqxInfo.load1 ? systemData.emqxInfo.load1 : 0 }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">5分钟平均负载:</el-col>-->
+<!--              <el-col :span="12">-->
+<!--                {{ systemData.emqxInfo.load5 ? systemData.emqxInfo.load5 : 0 }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--            <el-row :gutter="20" class="item-padding">-->
+<!--              <el-col :span="12">15分钟平均负载:</el-col>-->
+<!--              <el-col :span="12">-->
+<!--                {{ systemData.emqxInfo.load15 ? systemData.emqxInfo.load15 : 0 }}-->
+<!--              </el-col>-->
+<!--            </el-row>-->
+<!--          </div>-->
+<!--        </el-card>-->
       </el-col>
       <el-col :xs="12" :sm="12" :md="12" :lg="8" :xl="8">
         <el-card shadow="always" header="设备在离线" :body-style="{ padding: '10px' }">

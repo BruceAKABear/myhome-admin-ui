@@ -2,7 +2,12 @@
   <div class='page-container'>
     <div class='table-header-box'>
       <div style='display: flex;align-items: center'>
-        <el-select v-model="pageParam.productId" clearable placeholder="请选择产品" size="mini" style="margin-left: 10px">
+        <el-select
+          v-model="pageParam.productId"
+          clearable
+          placeholder="请选择产品"
+          size="mini"
+          style="margin-left: 10px">
           <el-option
             v-for="item in productList"
             :key="item.id"
@@ -93,7 +98,10 @@
       />
     </div>
 
-    <el-dialog :before-close="closeDia" :visible.sync='addDialogFormVisible' :title="dynamicObject.id?'修改固件':'新增固件'">
+    <el-dialog
+      :before-close="closeDia"
+      :visible.sync='addDialogFormVisible'
+      :title="dynamicObject.id?'修改固件':'新增固件'">
       <el-form
         ref='addForm'
         :model='dynamicObject'
@@ -131,15 +139,15 @@
           <el-upload
             class="upload-demo"
             :action="fileUploadUrl"
+            :headers="{token:store.state.userToken}"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
             :on-success="uploadSuccess"
-            multiple
             :limit="1"
             :on-exceed="handleExceed"
             :file-list="fileList">
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传设备固件</div>
           </el-upload>
         </el-form-item>
 
@@ -156,9 +164,15 @@
 <script>
 import { productListApi } from '@/api/DeviceManage'
 import { deleteFramewareApi, framewareAddApi, framewarePageApi } from '@/api/Frameware'
+import store from '@/store'
 
 export default {
   name: 'Firmware',
+  computed: {
+    store() {
+      return store
+    }
+  },
   data() {
     return {
       fileUploadUrl: process.env.VUE_APP_BASE_URL + '/file/uploadFile',

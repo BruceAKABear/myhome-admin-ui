@@ -34,8 +34,8 @@
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
                 p-id="1992"
-                width="25"
-                height="25">
+                width="22"
+                height="22">
                 <path
                   d="M870.912 103.936H152.576c-47.616 0-86.528 38.912-86.528 86.528v526.848c0 47.616 38.912 86.528 86.528 86.528h224.256l111.616 111.616c6.656 6.656 14.848 9.728 23.552 9.728s16.896-3.072 23.552-9.728L647.168 803.84h224.256c47.616 0 86.528-38.912 86.528-86.528V190.464c-0.512-47.616-38.912-86.528-87.04-86.528z m19.968 613.376c0 10.752-8.704 19.968-19.968 19.968H640c-10.24-2.048-21.504 1.024-29.696 9.216L512 844.8l-98.304-98.304c-8.192-8.192-19.456-11.264-29.696-9.216H152.576c-10.752 0-19.968-8.704-19.968-19.968V190.464c0-10.752 8.704-19.968 19.968-19.968h718.336c11.264 0 19.968 8.704 19.968 19.968v526.848z"
                   p-id="1993"
@@ -100,7 +100,6 @@
 </template>
 
 <script>
-import { updateSelectLang } from '@/api/SystemApi'
 
 export default {
   name: 'Index',
@@ -118,12 +117,14 @@ export default {
       this.$store.commit('setSecondMenus', menuData.children)
     },
     languageSelect(lang) {
-      updateSelectLang({ lang: lang }).then(res => {
-        if (res.status) {
-          this.$store.state.userInfo.selectLang = lang
-          this.$i18n.locale = lang
-        }
-      })
+      this.$i18n.locale = lang
+      this.$store.state.userInfo.selectLang = lang
+      // updateLang({ lang: lang }).then(res => {
+      //   if (res.status) {
+      //     this.$store.state.userInfo.selectLang = lang
+      //     this.$i18n.locale = lang
+      //   }
+      // })
     },
     moreAction(command) {
       switch (command) {

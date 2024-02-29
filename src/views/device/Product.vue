@@ -39,12 +39,23 @@
           <el-tag :type="scope.row.canControl?'success':'info' ">{{ scope.row.canControl ? '可控' : '不可控' }}</el-tag>
         </template>
       </el-table-column>
+
+      <el-table-column
+        align='center'
+        label='包含详情页'
+      >
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.detailPage?'success':'info' ">{{ scope.row.detailPage ? '包含' : '不包含' }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         align='center'
         label='产品类型'
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.type===1?'success':'info' ">{{ scope.row.type === 1 ? '普通产品' : '网关产品' }}</el-tag>
+          <el-tag :type="scope.row.type==='normal'?'success':'info' ">
+            {{ scope.row.type === 'normal' ? '普通产品' : '网关产品' }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -62,6 +73,7 @@
         align='center'
         label='更新时间'
         prop='updateTime'
+        hidden="x"
         show-overflow-tooltip
       />
       <el-table-column
@@ -93,27 +105,21 @@
       />
     </div>
 
-    <el-dialog :before-close="closeDia" :visible.sync='addDialogFormVisible' :title="dynamicObject.id?'修改产品':'新增产品'">
+    <el-dialog
+      :before-close="closeDia"
+      :visible.sync='addDialogFormVisible'
+      width="40%"
+      :title="dynamicObject.id?'修改产品':'新增产品'">
       <el-form
         ref='addForm'
         :model='dynamicObject'
         :rules='rules'
         class='demo-ruleForm'
-        label-width='100px'
+        label-width='25%'
         status-icon
       >
         <el-form-item label='产品名' prop='name'>
           <el-input v-model='dynamicObject.name' autocomplete='off' size="mini"/>
-        </el-form-item>
-        <el-form-item label='描述'>
-          <el-input
-            v-model='dynamicObject.note'
-            type="textarea"
-            maxlength="250"
-            show-word-limit
-            placeholder="请输入描述"
-            autocomplete='off'
-          />
         </el-form-item>
         <el-form-item label='是否可控' prop='canControl' size="mini">
           <el-col :span='24'>
@@ -123,11 +129,28 @@
               style='width: 100%'>
               <el-option
                 :value='true'
-                label='平台可控'>
+                label='可控'>
               </el-option>
               <el-option
                 :value='false'
-                label='平台不可控'>
+                label='不可控'>
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
+        <el-form-item label='包含详情' prop='canControl' size="mini">
+          <el-col :span='24'>
+            <el-select
+              v-model='dynamicObject.detailPage'
+              placeholder='请选择是否含详情页'
+              style='width: 100%'>
+              <el-option
+                :value='true'
+                label='包含'>
+              </el-option>
+              <el-option
+                :value='false'
+                label='不包含'>
               </el-option>
             </el-select>
           </el-col>
@@ -140,11 +163,11 @@
               placeholder='请选择产品类型'
               style='width: 100%'>
               <el-option
-                :value='1'
+                value='normal'
                 label='普通产品'>
               </el-option>
               <el-option
-                :value='2'
+                value='gateway'
                 label='网关产品'>
               </el-option>
             </el-select>
@@ -157,30 +180,21 @@
            required: true, message: '控制字段', trigger: 'blur'}"
           label='字段信息'
         >
-          <el-row :gutter="10">
-            <el-col :span="6">
-              <el-input v-model="item.label" size="mini" placeholder='显示值'></el-input>
+          <el-row :gutter="0">
+            <el-col :span="8">
+              <div style="padding-left: 8px">
+                <el-input v-model="item.label" size="mini" placeholder='显示值'></el-input>
+              </div>
             </el-col>
-            <el-col :span="6">
-              <el-input v-model="item.field" size="mini" placeholder='字段值'></el-input>
+            <el-col :span="8">
+              <div style="padding-left: 8px">
+                <el-input v-model="item.field" size="mini" placeholder='字段值'></el-input>
+              </div>
             </el-col>
-            <el-col :span="6">
-              <el-select
-                v-model='item.fieldType'
-                placeholder='字段类型'
-                size="mini"
-                style='width: 100%'>
-                <el-option
-                  v-for="(fieldTypeItem,index) in fieldTypeList"
-                  :key="index"
-                  :label='fieldTypeItem.fieldType'
-                  :value='fieldTypeItem.fieldType'>
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="5">
-              <div style="">
-                <el-button size="mini" type="danger" @click="deleteDynamicField(item)">删除</el-button>
+            <el-col :span="8">
+              <div style="padding-left: 8px">
+                <el-button size="mini" type="danger" @click="deleteDynamicField(item)" style="width: 100%">删除
+                </el-button>
               </div>
             </el-col>
           </el-row>
@@ -207,7 +221,6 @@ export default {
         productFields: [
           {
             field: '',
-            fieldType: '',
             key: Date.now()
           }
         ],
@@ -220,11 +233,6 @@ export default {
       },
 
       addDialogFormVisible: false,
-      fieldTypeList: [
-        { fieldType: 'int' },
-        { fieldType: 'boolean' },
-        { fieldType: 'string' }
-      ],
       rules: {
         name: [
           {
@@ -271,11 +279,11 @@ export default {
         productFields: [
           {
             field: '',
-            fieldType: '',
             key: Date.now()
           }
         ],
-        name: ''
+        name: '',
+        detailPage: true
       }
       this.addDialogFormVisible = true
       this.$nextTick(() => {
@@ -316,16 +324,15 @@ export default {
       })
     },
     addField() {
-      this.dynamicObject.categoryFieldList.push({
+      this.dynamicObject.productFields.push({
         field: '',
-        fieldType: '',
         key: Date.now()
       })
     },
     deleteDynamicField(item) {
-      const index = this.dynamicObject.categoryFieldList.indexOf(item)
+      const index = this.dynamicObject.productFields.indexOf(item)
       if (index !== -1) {
-        this.dynamicObject.categoryFieldList.splice(index, 1)
+        this.dynamicObject.productFields.splice(index, 1)
       }
     },
     closeDia() {
@@ -333,7 +340,6 @@ export default {
         categoryFieldList: [
           {
             field: '',
-            fieldType: '',
             key: Date.now()
           }
         ],

@@ -2,25 +2,43 @@
   <div class="page-container">
     <div class='table-header-box'>
       <div style='display: flex;align-items: center'>
-        <el-select v-model="pageParam.floorId" clearable placeholder="请选择楼层" size="mini">
-          <el-option
-            v-for="item in floorList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
+        <div>
+          <el-select
+v-model="pageParam.familyId"
+clearable
+:placeholder="$t('roomPage.search.familySelect')"
+                     size="mini">
+            <el-option
+              v-for="item in familyList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </div>
+
         <div style='margin-left: 10px'>
-          <el-input v-model="pageParam.roomName" placeholder="请输入房间名" size="mini" clearable></el-input>
+          <el-select v-model="pageParam.floorId" clearable :placeholder="$t('roomPage.search.floorSelect')" size="mini">
+            <el-option
+              v-for="item in floorList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
         </div>
         <div style='margin-left: 10px'>
-          <el-button icon='el-icon-search' size='mini' type='primary' @click='doPageQuery'>
-            搜索
-          </el-button>
+          <el-input
+v-model="pageParam.roomName"
+:placeholder="$t('roomPage.search.roomName')"
+size="mini"
+                    clearable></el-input>
         </div>
       </div>
       <div class='header-option-box'>
-        <el-button icon='el-icon-plus' size='mini' type='warning' @click='dialogVisible=true'>添加房间</el-button>
+        <el-button icon='el-icon-plus' size='mini' type='warning' @click='showUpdate(null)'>
+          {{ $t('roomPage.search.button') }}
+        </el-button>
       </div>
     </div>
 
@@ -33,55 +51,56 @@
     >
       <el-table-column
         align='center'
-        label='房间ID'
-        prop='id'
-        show-overflow-tooltip
-      />
-      <el-table-column
-        align='center'
-        label='房间名'
+        :label="$t('roomPage.table.header.roomName')"
         prop='name'
       />
       <el-table-column
         align='center'
-        label='所属楼层'
+        :label="$t('roomPage.table.header.roomName')"
         prop='floorName'
       />
       <el-table-column
         align='center'
-        label='房间下设备数'
+        :label="$t('roomPage.table.header.familyName')"
+        prop='familyName'
+      />
+      <el-table-column
+        align='center'
+        :label="$t('roomPage.table.header.deviceCount')"
         prop='deviceCount'
       />
       <el-table-column
         align='center'
-        label='定位基站数量'
-        prop='anchorCount'
+        :label="$t('roomPage.table.header.beacon')"
+        prop='beacon'
       />
       <el-table-column
         align='center'
-        label='创建时间'
+        :label="$t('roomPage.table.header.createTime')"
         prop='createTime'
         show-overflow-tooltip
       />
       <el-table-column
         align='center'
-        label='更新时间'
+        :label="$t('roomPage.table.header.updateTime')"
         prop='updateTime'
         show-overflow-tooltip
       />
       <el-table-column
         align='center'
-        label='操作'
+        :label="$t('roomPage.table.header.operation')"
         width='180'
       >
         <template slot-scope='scope'>
           <div style='display: flex;justify-content: center'>
-            <el-button size='mini' type='warning' @click='showUpdate(scope.row)'>修改</el-button>
+            <el-button size='mini' type='warning' @click='showUpdate(scope.row)'>
+              {{ $t('roomPage.table.header.operationModify') }}
+            </el-button>
             <el-button
               :disabled='scope.row.deviceCount!==0'
               size='mini'
               type='danger'
-              @click='deleteRoom(scope.row)'>删除
+              @click='deleteRoom(scope.row)'>{{ $t('roomPage.table.header.operationDelete') }}
             </el-button>
           </div>
         </template>
@@ -105,6 +124,23 @@
         label-width='200px'
         status-icon
       >
+        <el-form-item label='所属家庭' prop='familyId'>
+          <el-col :span="16">
+            <el-select
+              v-model="newObj.familyId"
+              :disabled="newObj.id&&newObj.id!==''"
+              placeholder="请选择家庭"
+              style="width: 100%">
+              <el-option
+                v-for="item in familyList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
         <el-form-item label='所属楼层' prop='floorId'>
           <el-col :span="16">
             <el-select
@@ -139,6 +175,7 @@
 <script>
 import { addUpdateApi, deleteRoomApi, roomPageApi } from '@/api/Room'
 import { floorListApi } from '@/api/Floor'
+import { familyListApi } from '@/api/FamilyApi'
 
 export default {
   name: 'Room',
@@ -150,8 +187,16 @@ export default {
       pageResult: {},
       newObj: {},
       floorList: [],
+      familyList: [],
       dialogVisible: false,
       rules: {
+        familyId: [
+          {
+            required: true,
+            message: '家庭必须选择',
+            trigger: 'change'
+          }
+        ],
         floorId: [
           {
             required: true,
@@ -185,8 +230,13 @@ export default {
         this.pageResult = res.data
       })
     },
-    doGetFloorList() {
-      floorListApi().then(res => {
+    doGetFamilyList() {
+      familyListApi().then(res => {
+        this.familyList = res.data.records
+      })
+    },
+    doGetFloorList(nv) {
+      floorListApi({ familyId: nv }).then(res => {
         this.floorList = res.data
       })
     },
@@ -201,6 +251,7 @@ export default {
               this.doPageQuery()
             } else {
               this.$notify.warning(res.message)
+              this.doPageQuery()
             }
           })
         } else {
@@ -222,16 +273,30 @@ export default {
       })
     },
     showUpdate(rowData) {
-      this.newObj.id = rowData.id
-      this.newObj.floorId = rowData.floorId
-      this.newObj.name = rowData.name
+      if (rowData !== null) {
+        this.newObj = rowData
+      }
       this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.addForm.clearValidate()
+      })
     }
 
   },
   mounted() {
     this.doPageQuery()
-    this.doGetFloorList()
+    this.doGetFamilyList()
+  },
+  watch: {
+    'pageParam.familyId'(nv, ov) {
+      this.doGetFloorList(nv)
+    },
+    'pageParam.floorId'(nv, ov) {
+      this.doPageQuery()
+    },
+    'pageParam.roomName'(nv, ov) {
+      this.doPageQuery()
+    }
   }
 }
 </script>

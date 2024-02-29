@@ -2,7 +2,7 @@ import elementZhCNLocale from 'element-ui/lib/locale/lang/zh-CN'
 
 const zhCN = {
   permMenu: {
-    '/dashboard': '控制台',
+    '/dashboard': '首页',
     '/family': '家庭管理',
     '/family/family': '家庭管理',
     '/family/floor': '楼层管理',
@@ -38,6 +38,95 @@ const zhCN = {
     roomCount: '房间数',
     deviceCount: '设备数',
     updateButton: '更新'
+  },
+  familyPage: {
+    search: {
+      info: '请输入家庭名',
+      button: '新增'
+    },
+    table: {
+      header: {
+        familyId: '家庭ID',
+        familyName: '家庭名称',
+        lat: '纬度',
+        long: '经度',
+        floorCount: '楼层数',
+        roomCount: '楼层数',
+        deviceCount: '设备数',
+        createTime: '创建时间',
+        updateTime: '更新时间',
+        operation: '操作',
+        operationModify: '修改',
+        operationDelete: '删除'
+
+      }
+    },
+    dialog: {
+      add: '新增家庭',
+      update: '修改家庭',
+      familyName: '家庭名',
+      lat: '纬度',
+      long: '经度',
+      cancel: '取消',
+      confirm: '确认'
+    }
+
+  },
+  floorPage: {
+    search: {
+      familySelect: '请选择家庭',
+      floorName: '请输入楼层名',
+      button: '新增'
+    },
+    table: {
+      header: {
+        familyName: '家庭',
+        floorName: '楼层',
+        roomCount: '房间数',
+        deviceCount: '设备数',
+        createTime: '创建时间',
+        updateTime: '创建时间',
+        operation: '操作',
+        operationModify: '修改',
+        operationDelete: '删除'
+
+      }
+    },
+    dialog: {
+      add: '新增',
+      update: '修改',
+      family: '所属家庭',
+      floorName: '楼层名'
+    }
+  },
+  roomPage: {
+    search: {
+      familySelect: '请选择家庭',
+      floorSelect: '请选择楼层',
+      roomName: '请输入房间名',
+      button: '新增'
+    },
+    table: {
+      header: {
+        roomName: '房间',
+        floorName: '楼层',
+        familyName: '家庭',
+        deviceCount: '设备数',
+        beacon: '信标',
+        createTime: '创建时间',
+        updateTime: '创建时间',
+        operation: '操作',
+        operationModify: '修改',
+        operationDelete: '删除'
+
+      }
+    },
+    dialog: {
+      add: '新增',
+      update: '修改',
+      family: '所属家庭',
+      floorName: '楼层名'
+    }
   },
   ...elementZhCNLocale
 }

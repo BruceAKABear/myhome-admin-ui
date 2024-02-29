@@ -5,11 +5,6 @@
         <div>
           <el-input v-model="pageParam.name" placeholder="请输入成员名" size="mini" clearable></el-input>
         </div>
-        <div style='margin-left: 10px'>
-          <el-button icon='el-icon-search' size='mini' type='primary' @click='doPageQuery'>
-            搜索
-          </el-button>
-        </div>
       </div>
       <div class='header-option-box'>
         <el-button icon='el-icon-plus' size='mini' type='warning' @click='showAddDia'>添加成员</el-button>
@@ -25,24 +20,18 @@
     >
       <el-table-column
         align='center'
-        label='ID'
-        prop='id'
-        show-overflow-tooltip
-      />
-      <el-table-column
-        align='center'
-        label='成员名'
+        label='昵称'
         prop='name'
       />
       <el-table-column
         align='center'
-        label='成员邮箱'
+        label='邮箱'
         prop='email'
         show-overflow-tooltip
       />
       <el-table-column
         align='center'
-        label='是否启用'
+        label='启用'
       >
         <template slot-scope="scope">
           <el-tag :type="scope.row.enable?'success':'danger'" effect="dark" size="small">{{
@@ -66,7 +55,7 @@
       <el-table-column
         align='center'
         label='角色'
-        prop='createTime'
+        prop='roleName'
         show-overflow-tooltip
       />
       <el-table-column
@@ -441,6 +430,11 @@ export default {
     this.doGetRoleList()
     this.doGetFloorList()
     this.doGetRoomDeviceList()
+  },
+  watch: {
+    'pageParam.name'() {
+      this.doPageQuery()
+    }
   }
 }
 </script>

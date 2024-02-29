@@ -32,15 +32,15 @@
 </template>
 
 <script>
-import { checkIsFirst, getPerm, getUserInfo, login } from '@/api/SystemApi'
+import { getPerm, getUserInfo, login } from '@/api/SystemApi'
 
 export default {
   name: 'Login',
   data() {
     return {
       loginObject: {
-        email: 'dengyi@dengyi.pro',
-        password: '12345678'
+        email: 'abc@abc.com',
+        password: 'admin123'
       }
     }
   },
@@ -57,27 +57,31 @@ export default {
       } else {
         login(this.loginObject).then(res => {
           this.$store.commit('setUserToken', res.data)
+
           getPerm().then(permRes => {
             console.log(permRes)
             this.$store.commit('setMenuData', permRes.data.menuPerms)
           })
-
           getUserInfo().then(result => {
             if (result.status) {
               this.$store.commit('setUserInfo', result.data)
               this.$i18n.locale = result.data.selectLang
               // 请求是否是第一次登录系统
-              checkIsFirst().then(res => {
-                if (res.status) {
-                  if (res.status && res.data) {
-                    this.$router.push('/family')
-                  } else {
-                    this.$router.push('/')
-                  }
-                } else {
-                  this.$notify.error(res.message)
-                }
-              })
+              // setTimeout(2, () => {
+              this.$router.push('/')
+              // checkIsFirst().then(res => {
+              //   if (res.status) {
+              //     if (res.status && res.data) {
+              //       this.$router.push('/family')
+              //     } else {
+              //       setTimeout(2, () => {
+              //         this.$router.push('/')
+              //       })
+              //     }
+              //   } else {
+              //     this.$notify.error(res.message)
+              //   }
+              // })
             }
           })
         })

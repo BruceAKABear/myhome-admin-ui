@@ -2,7 +2,15 @@
   <div class="page-container">
     <div class='table-header-box'>
       <div style='display: flex;align-items: center'>
-        <el-select v-model="pageParam.floorId" clearable placeholder="请选择楼层" size="mini">
+        <el-select v-model="pageParam.familyId" clearable placeholder="请选择家庭" size="mini">
+          <el-option
+            v-for="item in familyList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        <el-select v-model="pageParam.floorId" clearable placeholder="请选择楼层" size="mini" style="margin-left: 10px">
           <el-option
             v-for="item in floorList"
             :key="item.id"
@@ -49,19 +57,14 @@
     >
       <el-table-column
         align='center'
-        label='ID'
+        label='芯片ID'
         prop='id'
         width="160"
       />
       <el-table-column
         align='center'
-        label='所属产品'
-        prop='productName'
-      />
-      <el-table-column
-        align='center'
-        label='芯片ID'
-        prop='chipId'
+        label='名称'
+        prop='name'
       />
       <el-table-column
         align='center'
@@ -70,17 +73,27 @@
       />
       <el-table-column
         align='center'
-        label='所在楼层'
+        label='所属产品'
+        prop='productName'
+      />
+      <el-table-column
+        align='center'
+        label='家庭'
+        prop='familyName'
+      />
+      <el-table-column
+        align='center'
+        label='楼层'
         prop='floorName'
       />
       <el-table-column
         align='center'
-        label='所在房间'
+        label='房间'
         prop='roomName'
       />
       <el-table-column
         align='center'
-        label='在线状态'
+        label='状态'
       >
         <template slot-scope='scope'>
           <el-tag :type="scope.row.online?'success':'info' ">{{ scope.row.online ? '在线' : '离线' }}</el-tag>
@@ -92,18 +105,6 @@
       >
         <template slot-scope='scope'>
           <el-tag :type="scope.row.enable?'success':'info' ">{{ scope.row.enable ? '启用' : '停用' }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align='center'
-        label='仅户主可见'
-        prop='onlyHolderCanSee'
-      >
-        <template slot-scope='scope'>
-          <el-tag :type="scope.row.onlyHolderCanSee?'success':'info' ">{{
-              scope.row.onlyHolderCanSee ? '是' : '否'
-            }}
-          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -121,11 +122,11 @@
       <el-table-column
         align='center'
         label='操作'
-        width='190'
+        width='200'
         fixed="right"
       >
         <template slot-scope='scope'>
-          <div style='display: flex;justify-content: center'>
+          <div style='display: flex;justify-content: center;'>
             <el-button
               size='mini'
               type='primary'
@@ -161,7 +162,25 @@
         label-width='120px'
         status-icon
       >
-        <el-form-item label='所属楼层' prop='floorId'>
+        <el-form-item label='家庭' prop='familyId'>
+          <el-col :span="24">
+            <el-select
+              @change="familySelect"
+              v-model="newObj.familyId"
+              :disabled="newObj.id&&newObj.id!==''"
+              placeholder="请选择家庭"
+              style="width: 100%">
+              <el-option
+                v-for="item in familyList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
+        <el-form-item label='楼层' prop='floorId'>
           <el-col :span="24">
             <el-select
               @change="floorSelect"
@@ -203,9 +222,9 @@
             </el-select>
           </el-col>
         </el-form-item>
-        <el-form-item label='设备名' prop='nickName'>
+        <el-form-item label='设备名'>
           <el-col :span="24">
-            <el-input v-model='newObj.nickName' autocomplete='off'/>
+            <el-input v-model='newObj.name' autocomplete='off'/>
           </el-col>
         </el-form-item>
         <el-form-item label='芯片ID'>
@@ -227,6 +246,7 @@ import { addUpdateApi, deleteDeviceApi, devicePageApi, singleDeviceFirmwareUpdat
 import { floorListApi } from '@/api/Floor'
 import { productListApi } from '@/api/DeviceManage'
 import { roomListByFloorIdApi } from '@/api/Room'
+import { familyListApi } from '@/api/FamilyApi'
 
 export default {
   name: 'Device',
@@ -236,6 +256,7 @@ export default {
         pageSize: 14
       },
       pageResult: {},
+      familyList: [],
       floorList: [],
       roomList: [],
       productList: [],
@@ -292,8 +313,13 @@ export default {
         this.pageResult = res.data
       })
     },
-    doGetFloorList() {
-      floorListApi().then(res => {
+    doGetFamilyList() {
+      familyListApi().then(res => {
+        this.familyList = res.data.records
+      })
+    },
+    doGetFloorList(familyId) {
+      floorListApi({ familyId: familyId }).then(res => {
         this.floorList = res.data
       })
     },
@@ -347,6 +373,11 @@ export default {
         })
       })
     },
+    familySelect(data) {
+      floorListApi({ familyId: data }).then(res => {
+        this.floorList = res.data
+      })
+    },
     floorSelect(data) {
       roomListByFloorIdApi({ floorId: data }).then(res => {
         this.roomList = res.data
@@ -355,8 +386,14 @@ export default {
   },
   created() {
     this.doPageQuery()
-    this.doGetFloorList()
+    this.doGetFamilyList()
+
     this.doGetProductList()
+  },
+  watch: {
+    'pageParam.familyId'(nv, ov) {
+      this.doGetFloorList(nv)
+    }
   }
 }
 </script>
